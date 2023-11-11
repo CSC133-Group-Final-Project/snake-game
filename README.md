@@ -8,6 +8,7 @@
   - Some snakes may be able to go through walls.
   - Others can move faster.
   - Some can temporarily freeze time.
+  -  
 
 ## Power-Ups and Abilities
 - Introduce power-ups such as speed boosts, shields, or score multipliers.
@@ -53,6 +54,7 @@
 
 ## Model-View-ViewModel (MVVM)
 - **Model:** Handles the business logic and data, including classes like `Snake`, `FoodItem`, and `GameBoard`.
+  
 - **View:** Responsible for rendering game objects and detecting user input. In Android, this involves `Activity`, `Fragment`, and custom `View` classes.
 - **ViewModel:** Serves as an intermediary between the View and the Model, exposing data streams and handling user interaction logic.
 
@@ -64,6 +66,7 @@
 
 ## Observer
 - **LiveData:** Observes changes in game state within the MVVM architecture, updating the UI as necessary.
+
 
 ## Strategy
 - **MovementStrategy:** Defines algorithms for snake movement, changeable based on the game's state.
