@@ -1,45 +1,42 @@
 package com.proj.snake.views;
 
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.view.Display;
 
+// PongActivity class is the main Activity for the Pong game.
+// It manages the lifecycle of the PongGame object, ensuring it
+// pauses and resumes as the Activity lifecycle changes.
 public class SnakeActivity extends Activity {
+    // mPongGame is an instance of the PongGame class which handles the game logic and rendering.
+    private SnakeGame mSnakeGame;
 
-    // Declare an instance of SnakeGame
-    SnakeGame mSnakeGame;
-
-    // Set the game up
+    // Called when the activity is first created.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the pixel dimensions of the screen
-        Display display = getWindowManager().getDefaultDisplay();
+        // Initialize the PongGame object.
+        mSnakeGame = new SnakeGame(this);
 
-        // Initialize the result into a Point object
-        Point size = new Point();
-        display.getSize(size);
-
-        // Create a new instance of the SnakeEngine class
-        mSnakeGame = new SnakeGame(this, size);
-
-        // Make snakeEngine the view of the Activity
+        // Set the current content view to PongGame view for rendering the game.
         setContentView(mSnakeGame);
     }
 
-    // Start the thread in snakeEngine
+    // Called after onStop() when the current Activity is being re-displayed to the user.
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Resumes the game when the activity is resumed.
         mSnakeGame.resume();
     }
 
-    // Stop the thread in snakeEngine
+    // Called as part of the activity lifecycle when an activity is going into the background.
     @Override
     protected void onPause() {
         super.onPause();
+
+        // Pauses the game when the activity is paused to ensure game state is maintained.
         mSnakeGame.pause();
     }
 }

@@ -18,6 +18,8 @@ import android.view.SurfaceView;
 import com.proj.snake.R;
 import com.proj.snake.models.Apple;
 import com.proj.snake.models.Snake;
+import com.proj.snake.utils.GameConstants;
+import com.proj.snake.utils.ScreenInfo;
 
 import java.io.IOException;
 
@@ -36,9 +38,10 @@ public class SnakeGame extends SurfaceView implements Runnable {
     private int mEat_ID = -1;
     private int mCrashID = -1;
 
-    // The size in segments of the playable area
-    private final int NUM_BLOCKS_WIDE = 40;
-    private int mNumBlocksHigh;
+//    // The size in segments of the playable area
+//    a
+    private final int mNumBlocksHigh;
+    private final int blockSize;
 
     // How many points does the player have
     private int mScore;
@@ -53,16 +56,20 @@ public class SnakeGame extends SurfaceView implements Runnable {
     // And an apple
     private Apple mApple;
 
+    private final ScreenInfo screenInfo;
+
 
     // This is the constructor method that gets called
     // from SnakeActivity
-    public SnakeGame(Context context, Point size) {
+    public SnakeGame(Context context/*, Point size*/) {
         super(context);
+        ScreenInfo.init(context);
+        screenInfo = ScreenInfo.getInstance();
 
         // Work out how many pixels each block is
-        int blockSize = size.x / NUM_BLOCKS_WIDE;
+        blockSize = screenInfo.getBlockSize();
         // How many blocks of the same size will fit into the height
-        mNumBlocksHigh = size.y / blockSize;
+        mNumBlocksHigh = screenInfo.getNumBlocksHigh();
 
         // Initialize the SoundPool
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -99,12 +106,12 @@ public class SnakeGame extends SurfaceView implements Runnable {
 
         // Call the constructors of our two game objects
         mApple = new Apple(context,
-                new Point(NUM_BLOCKS_WIDE,
+                new Point(GameConstants.NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
 
         mSnake = new Snake(context,
-                new Point(NUM_BLOCKS_WIDE,
+                new Point(GameConstants.NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
 
@@ -115,7 +122,7 @@ public class SnakeGame extends SurfaceView implements Runnable {
     public void newGame() {
 
         // reset the snake
-        mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
+        mSnake.reset(GameConstants.NUM_BLOCKS_WIDE, mNumBlocksHigh);
 
         // Get the apple ready for dinner
         mApple.spawn();
