@@ -1,4 +1,4 @@
-package com.proj.snake;
+package com.proj.snake.views;
 
 import android.app.Activity;
 import android.graphics.Point;

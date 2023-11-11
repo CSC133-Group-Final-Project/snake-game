@@ -1,4 +1,4 @@
-package com.proj.snake;
+package com.proj.snake.models;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +8,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.view.MotionEvent;
+
+import com.proj.snake.R;
 
 import java.util.ArrayList;
 
@@ -44,7 +46,7 @@ public class Snake {
     private Bitmap mBitmapBody;
 
 
-    Snake(Context context, Point mr, int ss) {
+    public Snake(Context context, Point mr, int ss) {
 
         // Initialize our ArrayList
         segmentLocations = new ArrayList<>();
@@ -114,7 +116,7 @@ public class Snake {
     }
 
     // Get the snake ready for a new game
-    void reset(int w, int h) {
+    public void reset(int w, int h) {
 
         // Reset the heading
         heading = Heading.RIGHT;
@@ -127,7 +129,7 @@ public class Snake {
     }
 
 
-    void move() {
+    public void move() {
         // Move the body
         // Start at the back and move it
         // to the position of the segment in front of it
@@ -164,7 +166,7 @@ public class Snake {
 
     }
 
-    boolean detectDeath() {
+    public boolean detectDeath() {
         // Has the snake died?
         boolean dead = false;
 
@@ -189,7 +191,7 @@ public class Snake {
         return dead;
     }
 
-    boolean checkDinner(Point l) {
+    public boolean checkDinner(Point l) {
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
@@ -205,7 +207,7 @@ public class Snake {
         return false;
     }
 
-    void draw(Canvas canvas, Paint paint) {
+    public void draw(Canvas canvas, Paint paint) {
 
         // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
@@ -258,7 +260,7 @@ public class Snake {
 
 
     // Handle changing direction
-    void switchHeading(MotionEvent motionEvent) {
+    public void switchHeading(MotionEvent motionEvent) {
 
         // Is the tap on the right hand side?
         if (motionEvent.getX() >= halfWayPoint) {

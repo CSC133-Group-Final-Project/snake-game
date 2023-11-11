@@ -1,4 +1,4 @@
-package com.proj.snake;
+package com.proj.snake.views;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -14,6 +14,11 @@ import android.os.Build;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.proj.snake.R;
+import com.proj.snake.models.Apple;
+import com.proj.snake.models.Snake;
+
 import java.io.IOException;
 
 public class SnakeGame extends SurfaceView implements Runnable {
