@@ -3,7 +3,7 @@ package com.proj.snake.views;
 import android.app.Activity;
 import android.os.Bundle;
 
-// PongActivity class is the main Activity for the Pong game.
+// SnakeActivity class is the main Activity for the Pong game.
 // It manages the lifecycle of the PongGame object, ensuring it
 // pauses and resumes as the Activity lifecycle changes.
 public class SnakeActivity extends Activity {
