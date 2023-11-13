@@ -8,7 +8,7 @@ import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IGameEventListener;
 import com.proj.snake.managers.GameManager;
 import com.proj.snake.managers.GameStateManager;
-import com.proj.snake.utils.ScreenInfo;ereet
+import com.proj.snake.utils.ScreenInfo;
 
 public class SnakeGame extends SurfaceView implements IGameEventListener {
     // Flag to check whether the game is paused.
