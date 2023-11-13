@@ -1,0 +1,194 @@
+name: Charming Snake Workflow - Build, Generate Changelog, Commit and Push, Create Release
+env:
+    # The name of the main module repository
+    main_project_module: app
+  
+    # The name of the Play Store
+    playstore_name: Snake  
+on:
+    push:
+      branches:
+        - 'master'
+        - 'develop'
+        - 'feature/*'
+        - 'bugfix/*'
+        - 'hotfix/*'
+      paths-ignore:
+        - 'README.md'
+        - 'CHANGELOG.md'
+    workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+            token: ${{ secrets.MY_PAT }}
+            fetch-tags: true
+            fetch-depth: 0
+            show-progress: true
+
+      # Set Current Date As Env Variable
+      - name: Set current date as env variable
+        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      # Set Repository Name As Env Variable
+      - name: Set repository name as env variable
+        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+    
+      - name: Install dependencies
+        run: |
+            pip install GitPython
+            pip install argparse 
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+    
+      # Run Tests Build
+      - name: Run gradle tests
+        run: ./gradlew test
+
+      # Run Build Project
+      - name: Build gradle project
+        run: ./gradlew build
+
+      # Create APK Debug
+      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
+        run: ./gradlew assembleDebug
+
+      # Create APK Release
+      - name: Build apk release project (APK) - ${{ env.main_project_module }} module
+        run: ./gradlew assemble
+
+      # Create Bundle AAB Release
+      # Noted for main module build [main_project_module]:bundleRelease
+      - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
+        run: ./gradlew ${{ env.main_project_module }}:bundleRelease
+    
+      - name: Check for new tag
+        id: check_tag
+        run: echo "new_tag_needed=$(python3 changelog_manager.py check --repo-path .)" >> $GITHUB_ENV
+        continue-on-error: true
+    
+      - name: Check if it is initial tag
+        if: env.new_tag_needed == 'true'
+        run: echo "is_initial_tag=$(python3 changelog_manager.py is-initial-tag --repo-path .)" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Create and push initial new tag if needed
+        if: env.is_initial_tag == 'true' && env.new_tag_needed == 'true'
+        run: |
+          echo "NEW_TAG=$(python3 changelog_manager.py initial --repo-path .)" >> $GITHUB_ENV
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git push origin $NEW_TAG
+    
+      - name: Get incremental tag if needed
+        if: env.is_initial_tag == 'false' && env.new_tag_needed == 'true'
+        run: |
+            echo "NEW_TAG=$(python3 changelog_manager.py increment --repo-path .)" >> $GITHUB_ENV
+
+      # Upload Artifact Build
+      # Noted For Output [main_project_module]/build/outputs/apk/debug/
+      - name: Upload APK Debug - ${{ env.repository_name }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.playstore_name}}-${{ env.repository_name }}-${{ env.NEW_TAG }}-debug
+          path: ${{ env.main_project_module }}/build/outputs/apk/debug/
+
+      # Noted For Output [main_project_module]/build/outputs/apk/release/
+      - name: Upload APK Release - ${{ env.repository_name }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.playstore_name}}-${{ env.repository_name }}-${{ env.NEW_TAG }}-release
+          path: ${{ env.main_project_module }}/build/outputs/apk/release/
+
+      # Noted For Output [main_project_module]/build/outputs/bundle/release/
+      - name: Upload AAB (App Bundle) Release - ${{ env.repository_name }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.playstore_name}}-${{ env.repository_name }}-${{ env.NEW_TAG }}-aab
+          path: ${{ env.main_project_module }}/build/outputs/bundle/release/
+
+      - name: Generate changelog if incremental tag is created
+        if: env.new_tag_needed == 'true' && env.is_initial_tag == 'false'
+        run: |
+            python3 changelog_manager.py generate --since-tag ${{ steps.check_tag.outputs.previous_tag }} --new-tag ${{ steps.check_tag.outputs.new_tag }} --repo-path . 
+ 
+      - name: Update running changelog
+        run: |
+            python3 changelog_manager.py update-running --repo-path .
+
+      - name: Commit and push changelog
+        run: |
+            git config --global user.name 'Charming Snake CI/CD Bot'
+            git config --global user.email "<>"
+            git add CHANGELOG.md
+            git commit -m "Update changelog"
+            BRANCH_NAME=$(echo $GITHUB_REF | sed -e "s/refs\/heads\///g")
+            git push origin $BRANCH_NAME
+    
+      - name: Make a release
+        if: env.new_tag_needed == 'true'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+        with:
+            tag_name: ${{ env.NEW_TAG }}
+            release_name: ${{ env.NEW_TAG }}
+            body_path: CHANGELOG.md
+            draft: false
+            prerelease: false
+      - name: ls -lsa ${{ env.main_project_module }}/build/outputs/apk/*
+        run: |
+          ls -lsa ${{ env.main_project_module }}/build/outputs/apk/debug/
+          ls -lsa ${{ env.main_project_module }}/build/outputs/apk/release/
+          ls -lsa ${{ env.main_project_module }}/build/outputs/bundle/release/
+    
+      - name: Upload APK Artifacts To Release $${{ env.NEW_TAG }}}
+        if: env.new_tag_needed == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.main_project_module }}/build/outputs/apk/debug/app-debug.apk
+          asset_name: ${{ env.playstore_name}}-${{ env.repository_name }}-${{ env.NEW_TAG }}-debug.apk
+          asset_content_type: application/zip
+
+      - name: Upload APK Artifacts To Release  $${{ env.NEW_TAG }}}
+        if: env.new_tag_needed == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.main_project_module }}/build/outputs/apk/release/app-release-unsigned.apk 
+          asset_name: ${{ env.playstore_name}}-${{ env.repository_name }}-${{ env.NEW_TAG }}-release-unsigned.apk
+          asset_content_type: application/zip
+
+      - name: Upload AAB Artifacts To Release $${{ env.NEW_TAG }}}
+        if: env.new_tag_needed == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.main_project_module }}/build/outputs/bundle/release/app-release.aab
+          asset_name: ${{ env.playstore_name}}-${{ env.repository_name }}-${{ env.NEW_TAG }}-release.aab
+          asset_content_type: application/zip

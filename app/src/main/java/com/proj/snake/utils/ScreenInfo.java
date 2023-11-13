@@ -37,16 +37,6 @@ public class ScreenInfo {
         mScreenY = displayMetrics.heightPixels;
     }
 
-//    // Getter for screen width
-//    public int getScreenX() {
-//        return mScreenX;
-//    }
-//
-//    // Getter for screen height
-//    public int getScreenY() {
-//        return mScreenY;
-//    }
-
     // Getter for block size
     public int getBlockSize() {
         return mScreenX / GameConstants.NUM_BLOCKS_WIDE;
@@ -55,5 +45,15 @@ public class ScreenInfo {
     // Getter for maximum number of blocks based on height
     public int getNumBlocksHigh() {
         return mScreenY / getBlockSize();
+    }
+
+    // Getter for screen width
+    public int getScreenX() {
+        return mScreenX;
+    }
+
+    // Getter for screen height
+    public int getScreenY() {
+        return mScreenY;
     }
 }
