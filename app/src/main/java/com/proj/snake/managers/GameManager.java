@@ -6,9 +6,10 @@ import android.graphics.Point;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.proj.snake.events.CollisionEventPublisher;
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IAudioManager;
-import com.proj.snake.interfaces.IGameEventListener;
+import com.proj.snake.interfaces.ICollisionEventListener;
 import com.proj.snake.interfaces.ITouchEventListener;
 import com.proj.snake.models.Apple;
 import com.proj.snake.models.Snake;
@@ -16,7 +17,7 @@ import com.proj.snake.models.HighScoreBoard;
 import com.proj.snake.utils.GameConstants;
 import com.proj.snake.utils.ScreenInfo;
 
-public class GameManager implements ITouchEventListener {
+public class GameManager implements ITouchEventListener, ICollisionEventListener {
     // A snake ssss
     private final Snake mSnake;
     private final Apple mApple;
@@ -25,14 +26,19 @@ public class GameManager implements ITouchEventListener {
 
     private final HighScoreBoard scoreBoard;
     private static long mNextFrameTime; // the time the next frame should be drawn
+    private CollisionEventPublisher collisionEventPublisher;
 
     public GameManager(Context context, GameEventPublisher gameEventPublisher) {
         // Initialize screen info.
         ScreenInfo.init(context);
 
+        // Initialize collision event publisher.
+        collisionEventPublisher = new CollisionEventPublisher();
+        collisionEventPublisher.addListener(this);
+
         // Initialize game entities.
         // Call the constructors of our two game objects
-        mApple = new Apple(context,
+        mApple = Apple.getInstance(context,
                 new Point(GameConstants.NUM_BLOCKS_WIDE,
                         ScreenInfo.getInstance().getNumBlocksHigh()),
                 ScreenInfo.getInstance().getBlockSize());
@@ -40,7 +46,7 @@ public class GameManager implements ITouchEventListener {
         mSnake = new Snake(context,
                 new Point(GameConstants.NUM_BLOCKS_WIDE,
                         ScreenInfo.getInstance().getNumBlocksHigh()),
-                ScreenInfo.getInstance().getBlockSize());
+                ScreenInfo.getInstance().getBlockSize(), collisionEventPublisher);
 
         this.gameEventPublisher = gameEventPublisher;
 
@@ -101,24 +107,7 @@ public class GameManager implements ITouchEventListener {
 
     // Update all the game objects
     public void update() {
-        // Move the snake
         mSnake.move();
-        // Did the head of the snake eat the apple?
-        if(mSnake.checkDinner(mApple.getLocation())){
-            // This reminds me of Edge of Tomorrow.
-            // One day the apple will be ready!
-            mApple.spawn();
-            scoreBoard.addScore();
-            // Play a sound
-            audioManager.play(GameConstants.EAT_SOUND);
-        }
-        // Did the snake die?
-        if (mSnake.detectDeath()) {
-            // Pause the game ready to start again
-            audioManager.play(GameConstants.DEATH_SOUND);
-            gameEventPublisher.notifyGameOver();
-            scoreBoard.resetScore();
-        }
     }
 
 
@@ -137,4 +126,27 @@ public class GameManager implements ITouchEventListener {
     public boolean isGamePaused() {
         return gameEventPublisher.notifyIsPaused();
     }
+
+    @Override
+    public void onCollisionWithWall() {
+        Log.d("Collision", "Collision with wall");
+        gameEventPublisher.notifyGameOver();
+    }
+
+    @Override
+    public void onCollisionWithSelf() {
+        Log.d("Collision", "Collision with self");
+        gameEventPublisher.notifyGameOver();
+    }
+
+    @Override
+    public void onCollisionWithFood() {
+        Log.d("Collision", "Collision with food");
+        mApple.spawn();
+        audioManager.play(GameConstants.EAT_SOUND);
+        scoreBoard.addScore();
+        mSnake.grow();
+    }
 }
+
+
