@@ -10,12 +10,17 @@ import com.proj.snake.events.CollisionEventPublisher;
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IAudioManager;
 import com.proj.snake.interfaces.ICollisionEventListener;
+import com.proj.snake.interfaces.IResettableEntity;
 import com.proj.snake.interfaces.ITouchEventListener;
 import com.proj.snake.models.Apple;
+import com.proj.snake.models.SlowDownPowerUp;
 import com.proj.snake.models.Snake;
 import com.proj.snake.models.HighScoreBoard;
 import com.proj.snake.utils.GameConstants;
 import com.proj.snake.utils.ScreenInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameManager implements ITouchEventListener, ICollisionEventListener {
     // A snake ssss
@@ -25,15 +30,22 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
     private final IAudioManager audioManager;
 
     private final HighScoreBoard scoreBoard;
+
+    private SlowDownPowerUp slowDownPowerUp;
+
+    private final Point spawnRange;
+
+
     private static long mNextFrameTime; // the time the next frame should be drawn
-    private CollisionEventPublisher collisionEventPublisher;
+    private final List<IResettableEntity> resettables = new ArrayList<>();
+
 
     public GameManager(Context context, GameEventPublisher gameEventPublisher) {
         // Initialize screen info.
         ScreenInfo.init(context);
 
         // Initialize collision event publisher.
-        collisionEventPublisher = new CollisionEventPublisher();
+        CollisionEventPublisher collisionEventPublisher = new CollisionEventPublisher();
         collisionEventPublisher.addListener(this);
 
         // Initialize game entities.
@@ -56,17 +68,22 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         // Initialize the Highscore board
         scoreBoard = HighScoreBoard.getInstance();
 
+        // Add resettable entities to the list of resettables.
+        resettables.add(mSnake);
+        resettables.add(scoreBoard);
+        resettables.add(mApple);
+
+        spawnRange = new Point(GameConstants.NUM_BLOCKS_WIDE, ScreenInfo.getInstance().getNumBlocksHigh());
+        this.slowDownPowerUp = SlowDownPowerUp.getInstance(context, spawnRange, ScreenInfo.getInstance().getBlockSize());
+
         reset();
     }
 
     // Reset the game state.
     public void reset() {
-        // reset the snake
-        mSnake.reset(GameConstants.NUM_BLOCKS_WIDE, ScreenInfo.getInstance().getNumBlocksHigh());
-        // Get the apple ready for dinner
-        mApple.spawn();
-        // Reset the mScore
-        scoreBoard.resetScore();
+        for (IResettableEntity resettable : resettables) {
+            resettable.reset();
+        }
         // Setup mNextFrameTime so an update can triggered
         mNextFrameTime = System.currentTimeMillis();
     }
@@ -130,22 +147,45 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
     @Override
     public void onCollisionWithWall() {
         Log.d("Collision", "Collision with wall");
+        audioManager.play(GameConstants.DEATH_SOUND);
         gameEventPublisher.notifyGameOver();
     }
 
     @Override
     public void onCollisionWithSelf() {
         Log.d("Collision", "Collision with self");
+        audioManager.play(GameConstants.DEATH_SOUND);
         gameEventPublisher.notifyGameOver();
     }
 
     @Override
     public void onCollisionWithFood() {
         Log.d("Collision", "Collision with food");
-        mApple.spawn();
+        mApple.reset();
         audioManager.play(GameConstants.EAT_SOUND);
         scoreBoard.addScore();
         mSnake.grow();
+
+        // Check for collision with SlowDownPowerUp
+        if (mSnake.getHeadLocation().equals(slowDownPowerUp.getLocation())) {
+            // Activate slow down effect
+            mSnake.setSlowDownMode(true);
+            // Reset power-up location
+            slowDownPowerUp.reset(spawnRange);
+        }
+    }
+
+    @Override
+    public void onCollisionWithPowerUp() {
+        // Handle the logic when the snake collides with the power-up
+        // For instance, activate slow-down mode and reset power-up location
+        mSnake.setSlowDownMode(true);
+        slowDownPowerUp.reset(spawnRange);
+    }
+
+    // Method to get SlowDownPowerUp
+    public SlowDownPowerUp getSlowDownPowerUp() {
+        return slowDownPowerUp;
     }
 }
 

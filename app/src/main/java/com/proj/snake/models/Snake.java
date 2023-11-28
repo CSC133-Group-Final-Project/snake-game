@@ -11,10 +11,13 @@ import android.view.MotionEvent;
 
 import com.proj.snake.R;
 import com.proj.snake.events.CollisionEventPublisher;
+import com.proj.snake.interfaces.IResettableEntity;
+import com.proj.snake.utils.GameConstants;
+import com.proj.snake.utils.ScreenInfo;
 
 import java.util.ArrayList;
 
-public class Snake {
+public class Snake implements IResettableEntity {
 
     // The location in the grid of all the segments
     private ArrayList<Point> segmentLocations;
@@ -30,8 +33,12 @@ public class Snake {
     private int halfWayPoint;
 
     private boolean isDead = false;
+    private boolean isSlowedDown = false;
+    private long slowDownEndTime = 0;
+    private boolean moveThisFrame = true;
 
     private final CollisionEventPublisher collisionEventPublisher;
+
 
 
     public void onCollisionWithFood() {
@@ -126,7 +133,8 @@ public class Snake {
     }
 
     // Get the snake ready for a new game
-    public void reset(int w, int h) {
+    @Override
+    public void reset() {
 
         // Reset the heading
         heading = Heading.RIGHT;
@@ -135,21 +143,40 @@ public class Snake {
         segmentLocations.clear();
 
         // Start with a single snake segment
-        segmentLocations.add(new Point(w / 2, h / 2));
+        segmentLocations.add(new Point(GameConstants.NUM_BLOCKS_WIDE / 2, ScreenInfo.getInstance().getNumBlocksHigh() / 2));
     }
 
     public void move() {
+        // Check if slow down mode is active and timer has expired
+        if (isSlowedDown && System.currentTimeMillis() > slowDownEndTime) {
+            isSlowedDown = false;
+        }
+
+        // Slow down movement if in slow down mode
+        if (isSlowedDown) {
+            // Alternate between moving and not moving each frame
+            if (moveThisFrame) {
+                updateSnakePosition(); // Update the position this frame
+                moveThisFrame = false; // Skip the next frame
+            } else {
+                moveThisFrame = true; // Move on the next frame
+            }
+        } else {
+            // Normal movement logic, moving every frame
+            updateSnakePosition();
+            collisionEventPublisher.checkCollisionWithPowerUp(segmentLocations, SlowDownPowerUp.getInstance().getLocation());
+        }
+    }
+
+    private void updateSnakePosition() {
         // Move the body
-        // Start at the back and move it to the position of the segment in front of it
         for (int i = segmentLocations.size() - 1; i > 0; i--) {
             segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
             segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
         }
 
-        // Get the current head position
+        // Move the head
         Point head = segmentLocations.get(0);
-
-        // Move the head in the appropriate heading
         switch (heading) {
             case UP:
                 head.y--;
@@ -169,6 +196,16 @@ public class Snake {
         collisionEventPublisher.checkCollisionWithWall(head, mMoveRange);
         collisionEventPublisher.checkCollisionWithSelf(segmentLocations);
         collisionEventPublisher.checkCollisionWithFood(segmentLocations, Apple.getRunningInstance().getLocation());
+    }
+
+    public Point getHeadLocation() {
+        // Assuming the head is always at index 0
+        return segmentLocations.get(0);
+    }
+
+    public void setSlowDownMode(boolean slowDown) {
+        this.isSlowedDown = slowDown;
+        this.slowDownEndTime = System.currentTimeMillis() + 15000; // 15 seconds
     }
 
     public void grow() {
