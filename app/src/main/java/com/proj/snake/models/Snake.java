@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 
 import com.proj.snake.R;
+import com.proj.snake.events.CollisionEventPublisher;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,15 @@ public class Snake {
     // horizontally in pixels?
     private int halfWayPoint;
 
+    private boolean isDead = false;
+
+    private final CollisionEventPublisher collisionEventPublisher;
+
+
+    public void onCollisionWithFood() {
+        segmentLocations.add(new Point(-10, -10));
+    }
+
     // For tracking movement Heading
     private enum Heading {
         UP, RIGHT, DOWN, LEFT
@@ -45,9 +55,7 @@ public class Snake {
     // A bitmap for the body
     private Bitmap mBitmapBody;
 
-
-    public Snake(Context context, Point mr, int ss) {
-
+    public Snake(Context context, Point mr, int ss, CollisionEventPublisher collisionEventPublisher) {
         // Initialize our ArrayList
         segmentLocations = new ArrayList<>();
 
@@ -113,6 +121,8 @@ public class Snake {
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
+
+        this.collisionEventPublisher = collisionEventPublisher;
     }
 
     // Get the snake ready for a new game
@@ -128,83 +138,46 @@ public class Snake {
         segmentLocations.add(new Point(w / 2, h / 2));
     }
 
-
     public void move() {
         // Move the body
-        // Start at the back and move it
-        // to the position of the segment in front of it
+        // Start at the back and move it to the position of the segment in front of it
         for (int i = segmentLocations.size() - 1; i > 0; i--) {
-
-            // Make it the same value as the next segment
-            // going forwards towards the head
             segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
             segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
         }
 
-        // Move the head in the appropriate heading
-        // Get the existing head position
-        Point p = segmentLocations.get(0);
+        // Get the current head position
+        Point head = segmentLocations.get(0);
 
-        // Move it appropriately
+        // Move the head in the appropriate heading
         switch (heading) {
             case UP:
-                p.y--;
+                head.y--;
                 break;
-
             case RIGHT:
-                p.x++;
+                head.x++;
                 break;
-
             case DOWN:
-                p.y++;
+                head.y++;
                 break;
-
             case LEFT:
-                p.x--;
+                head.x--;
                 break;
         }
 
+        // Check for collisions after moving the head
+        collisionEventPublisher.checkCollisionWithWall(head, mMoveRange);
+        collisionEventPublisher.checkCollisionWithSelf(segmentLocations);
+        collisionEventPublisher.checkCollisionWithFood(segmentLocations, Apple.getRunningInstance().getLocation());
     }
 
-    public boolean detectDeath() {
-        // Has the snake died?
-        boolean dead = false;
+    public void grow() {
+        // Grab the last segment in the ArrayList
+        // which will be the tail of the snake
+        Point lastSegment = segmentLocations.get(segmentLocations.size() - 1);
 
-        // Hit any of the screen edges
-        if (segmentLocations.get(0).x == -1 ||
-                segmentLocations.get(0).x > mMoveRange.x ||
-                segmentLocations.get(0).y == -1 ||
-                segmentLocations.get(0).y > mMoveRange.y) {
-
-            dead = true;
-        }
-
-        // Eaten itself?
-        for (int i = segmentLocations.size() - 1; i > 0; i--) {
-            // Have any of the sections collided with the head
-            if (segmentLocations.get(0).x == segmentLocations.get(i).x &&
-                    segmentLocations.get(0).y == segmentLocations.get(i).y) {
-
-                dead = true;
-            }
-        }
-        return dead;
-    }
-
-    public boolean checkDinner(Point l) {
-        //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
-        if (segmentLocations.get(0).x == l.x &&
-                segmentLocations.get(0).y == l.y) {
-
-            // Add a new Point to the list
-            // located off-screen.
-            // This is OK because on the next call to
-            // move it will take the position of
-            // the segment in front of it
-            segmentLocations.add(new Point(-10, -10));
-            return true;
-        }
-        return false;
+        // Duplicate this point and add it to the end of the snake
+        segmentLocations.add(new Point(lastSegment.x, lastSegment.y));
     }
 
     public void draw(Canvas canvas, Paint paint) {

@@ -12,6 +12,7 @@ import com.proj.snake.R;
 import java.util.Random;
 
 public class Apple {
+    private static Apple instance;
 
     // The location of the apple on the grid
     // Not in pixels
@@ -26,20 +27,26 @@ public class Apple {
     private Bitmap mBitmapApple;
 
     /// Set up the apple in the constructor
-    public Apple(Context context, Point sr, int s){
-
-        // Make a note of the passed in spawn range
+    // Private constructor
+    private Apple(Context context, Point sr, int s) {
         mSpawnRange = sr;
-        // Make a note of the size of an apple
         mSize = s;
-        // Hide the apple off-screen until the game starts
         location.x = -10;
 
-        // Load the image to the bitmap
         mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
-
-        // Resize the bitmap
         mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
+    }
+
+    // Public static method to get instance
+    public static Apple getInstance(Context context, Point sr, int s) {
+        if (instance == null) {
+            instance = new Apple(context, sr, s);
+        }
+        return instance;
+    }
+
+    public static Apple getRunningInstance() {
+        return instance;
     }
 
     // This is called every time an apple is eaten
