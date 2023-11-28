@@ -1,7 +1,8 @@
 package com.proj.snake.models;
 
-public class HighScoreBoard {
-    // TODO: Implement this class - Stores the high score of the player.
+import com.proj.snake.interfaces.IResettableEntity;
+
+public class HighScoreBoard implements IResettableEntity {
     static int mScore;
 
     private static HighScoreBoard instance = null;
@@ -25,7 +26,8 @@ public class HighScoreBoard {
     }
 
     //resetScore() method from GameManager class
-    public void resetScore() {
+    @Override
+    public void reset() {
         mScore = 0;
     }
 

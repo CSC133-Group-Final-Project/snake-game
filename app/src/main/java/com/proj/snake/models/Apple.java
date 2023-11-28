@@ -8,20 +8,21 @@ import android.graphics.Paint;
 import android.graphics.Point;
 
 import com.proj.snake.R;
+import com.proj.snake.interfaces.IResettableEntity;
 
 import java.util.Random;
 
-public class Apple {
+public class Apple implements IResettableEntity {
     private static Apple instance;
 
     // The location of the apple on the grid
     // Not in pixels
-    private Point location = new Point();
+    private final Point location = new Point();
 
     // The range of values we can choose from
     // to spawn an apple
-    private Point mSpawnRange;
-    private int mSize;
+    private final Point mSpawnRange;
+    private final int mSize;
 
     // An image to represent the apple
     private Bitmap mBitmapApple;
@@ -50,7 +51,8 @@ public class Apple {
     }
 
     // This is called every time an apple is eaten
-    public void spawn(){
+    @Override
+    public void reset(){
         // Choose two random values and place the apple
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;

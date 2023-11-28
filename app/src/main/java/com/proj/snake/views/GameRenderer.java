@@ -95,6 +95,9 @@ public class GameRenderer extends SurfaceView {
             // Draw some debugging text
             printDebuggingText();
 
+            // Draw the SlowDownPowerUp
+            gameManager.getSlowDownPowerUp().draw(mCanvas, mPaint);
+
             // Unlock the mCanvas and reveal the graphics for this frame
             mSurfaceHolder.unlockCanvasAndPost(mCanvas);
         }

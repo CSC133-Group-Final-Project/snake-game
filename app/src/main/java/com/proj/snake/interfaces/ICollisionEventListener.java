@@ -4,4 +4,6 @@ public interface ICollisionEventListener {
     void onCollisionWithWall();
     void onCollisionWithSelf();
     void onCollisionWithFood();
+    void onCollisionWithPowerUp();
+
 }

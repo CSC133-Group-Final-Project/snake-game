@@ -45,6 +45,19 @@ public class CollisionEventPublisher {
         }
     }
 
+    // Method to check collision with power-up
+    public void checkCollisionWithPowerUp(List<Point> segmentLocations, Point powerUpLocation) {
+        if (segmentLocations.get(0).x == powerUpLocation.x && segmentLocations.get(0).y == powerUpLocation.y) {
+            publishCollisionWithPowerUp();
+        }
+    }
+
+    private void publishCollisionWithPowerUp() {
+        for (ICollisionEventListener listener : listeners) {
+            listener.onCollisionWithPowerUp();
+        }
+    }
+
     private void publishCollisionWithWall() {
         for (ICollisionEventListener listener : listeners) {
             listener.onCollisionWithWall();
