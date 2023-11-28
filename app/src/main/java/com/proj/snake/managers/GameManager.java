@@ -1,5 +1,6 @@
 package com.proj.snake.managers;
 
+
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
@@ -11,22 +12,18 @@ import com.proj.snake.interfaces.IGameEventListener;
 import com.proj.snake.interfaces.ITouchEventListener;
 import com.proj.snake.models.Apple;
 import com.proj.snake.models.Snake;
+import com.proj.snake.models.HighScoreBoard;
 import com.proj.snake.utils.GameConstants;
 import com.proj.snake.utils.ScreenInfo;
 
 public class GameManager implements ITouchEventListener {
-    // How many points does the player have
-    private int mScore;
-
     // A snake ssss
     private final Snake mSnake;
-    // And an apple
     private final Apple mApple;
-
     private final GameEventPublisher gameEventPublisher;
-
     private final IAudioManager audioManager;
 
+    private final HighScoreBoard scoreBoard;
     private static long mNextFrameTime; // the time the next frame should be drawn
 
     public GameManager(Context context, GameEventPublisher gameEventPublisher) {
@@ -50,6 +47,9 @@ public class GameManager implements ITouchEventListener {
         // Initialize the SoundPool
         audioManager = AudioManagerImpl.getInstance(context);
 
+        // Initialize the Highscore board
+        scoreBoard = HighScoreBoard.getInstance();
+
         reset();
     }
 
@@ -60,7 +60,7 @@ public class GameManager implements ITouchEventListener {
         // Get the apple ready for dinner
         mApple.spawn();
         // Reset the mScore
-        resetScore();
+        scoreBoard.resetScore();
         // Setup mNextFrameTime so an update can triggered
         mNextFrameTime = System.currentTimeMillis();
     }
@@ -77,7 +77,7 @@ public class GameManager implements ITouchEventListener {
 
     // Getter for the score.
     public int getScore() {
-        return mScore;
+        return scoreBoard.getScore();
     }
 
     // Check to see if it is time for an update
@@ -108,7 +108,7 @@ public class GameManager implements ITouchEventListener {
             // This reminds me of Edge of Tomorrow.
             // One day the apple will be ready!
             mApple.spawn();
-            addScore();
+            scoreBoard.addScore();
             // Play a sound
             audioManager.play(GameConstants.EAT_SOUND);
         }
@@ -117,16 +117,10 @@ public class GameManager implements ITouchEventListener {
             // Pause the game ready to start again
             audioManager.play(GameConstants.DEATH_SOUND);
             gameEventPublisher.notifyGameOver();
+            scoreBoard.resetScore();
         }
     }
 
-    private void addScore() {
-        mScore++;
-    }
-
-    private void resetScore() {
-        mScore = 0;
-    }
 
     // Handle Bat movement events based on callback from TouchInputHandler.
     @Override
@@ -144,5 +138,3 @@ public class GameManager implements ITouchEventListener {
         return gameEventPublisher.notifyIsPaused();
     }
 }
-
-
