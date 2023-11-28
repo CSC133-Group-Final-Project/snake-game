@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 public class Snake {
 
+    private float Xspeed;
+    private float Yspeed;
     // The location in the grid of all the segments
     private ArrayList<Point> segmentLocations;
 
@@ -115,6 +117,7 @@ public class Snake {
         halfWayPoint = mr.x * ss / 2;
     }
 
+
     // Get the snake ready for a new game
     public void reset(int w, int h) {
 
@@ -129,6 +132,11 @@ public class Snake {
     }
 
 
+    void increaseSpeed(){
+        //increases speed of snake by 10%
+        Xspeed = Xspeed * 1.1f;
+        Yspeed = Yspeed * 1.1f;
+    }
     public void move() {
         // Move the body
         // Start at the back and move it
@@ -255,6 +263,7 @@ public class Snake {
                         segmentLocations.get(i).y
                                 * mSegmentSize, paint);
             }
+
         }
     }
 
