@@ -1,5 +1,8 @@
 package com.proj.snake.utils;
 
+import android.graphics.Point;
+import java.util.List;
+
 public class CollisionDetector {
-    // TODO: Implement this class - Detects collisions between game objects.
+
 }
