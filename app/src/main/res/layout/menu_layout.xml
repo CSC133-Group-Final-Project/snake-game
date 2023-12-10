@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/snake_menu"
+    android:theme="@style/Theme.MaterialComponents"
+    android:padding="20dp">
+
+    <!-- Play Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/playButton"
+        app:backgroundTint="@color/orange_500"
+        android:layout_width="185dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/play"
+        app:cornerRadius="25dp"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <!-- High Score Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/highScoreButton"
+        app:backgroundTint="@color/orange_500"
+        android:layout_width="185dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/playButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/high_score"
+        app:cornerRadius="25dp"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <!-- Sound On/Off Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/soundButton"
+        app:backgroundTint="@color/orange_500"
+        android:layout_width="185dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/highScoreButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/sound_on_off"
+        app:cornerRadius="25dp"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <!-- About Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/aboutButton"
+        android:layout_width="185dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/soundButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/about"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/orange_500"
+        app:cornerRadius="25dp" />
+
+    <!-- Exit Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/exitButton"
+        android:layout_width="185dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/aboutButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/exit"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/orange_500"
+        app:cornerRadius="25dp" />
+</RelativeLayout>

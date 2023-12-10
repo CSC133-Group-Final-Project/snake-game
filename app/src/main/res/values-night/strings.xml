@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="play">Play</string>
+    <string name="high_score">High Score</string>
+    <string name="sound_on_off">Sound On/Off</string>
+    <string name="about">About</string>
+    <string name="exit">Exit</string>
+    <string name="snake_game">Snake Game</string>
+</resources>
