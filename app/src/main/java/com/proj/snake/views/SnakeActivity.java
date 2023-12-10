@@ -3,6 +3,9 @@ package com.proj.snake.views;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.proj.snake.R;
+import com.proj.snake.managers.AudioManagerImpl;
+
 // SnakeActivity class is the main Activity for the Pong game.
 // It manages the lifecycle of the PongGame object, ensuring it
 // pauses and resumes as the Activity lifecycle changes.
@@ -29,6 +32,7 @@ public class SnakeActivity extends Activity {
 
         // Resumes the game when the activity is resumed.
         mSnakeGame.resume();
+        AudioManagerImpl.getInstance(this).reinitialize();
     }
 
     // Called as part of the activity lifecycle when an activity is going into the background.
