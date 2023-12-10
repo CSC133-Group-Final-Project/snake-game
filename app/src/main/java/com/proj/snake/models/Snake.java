@@ -71,29 +71,31 @@ public class Snake implements IResettableEntity {
         mSegmentSize = ss;
         mMoveRange = mr;
 
+        int headSize = ss * 3;
+
         // Create and scale the bitmaps
         mBitmapHeadRight = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.head);
+                        R.drawable.newhead);
 
         // Create 3 more versions of the head for different headings
         mBitmapHeadLeft = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.head);
+                        R.drawable.newhead);
 
         mBitmapHeadUp = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.head);
+                        R.drawable.newhead);
 
         mBitmapHeadDown = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.head);
+                        R.drawable.newhead);
 
         // Modify the bitmaps to face the snake head
         // in the correct direction
         mBitmapHeadRight = Bitmap
                 .createScaledBitmap(mBitmapHeadRight,
-                        ss, ss, false);
+                        headSize, headSize, false);
 
         // A matrix for scaling
         Matrix matrix = new Matrix();
@@ -101,20 +103,20 @@ public class Snake implements IResettableEntity {
 
         mBitmapHeadLeft = Bitmap
                 .createBitmap(mBitmapHeadRight,
-                        0, 0, ss, ss, matrix, true);
+                        0, 0, headSize, headSize, matrix, true);
 
         // A matrix for rotating
         matrix.preRotate(-90);
         mBitmapHeadUp = Bitmap
                 .createBitmap(mBitmapHeadRight,
-                        0, 0, ss, ss, matrix, true);
+                        0, 0, headSize, headSize, matrix, true);
 
         // Matrix operations are cumulative
         // so rotate by 180 to face down
         matrix.preRotate(180);
         mBitmapHeadDown = Bitmap
                 .createBitmap(mBitmapHeadRight,
-                        0, 0, ss, ss, matrix, true);
+                        0, 0, headSize, headSize, matrix, true);
 
         // Create and scale the body
         mBitmapBody = BitmapFactory
@@ -123,7 +125,7 @@ public class Snake implements IResettableEntity {
 
         mBitmapBody = Bitmap
                 .createScaledBitmap(mBitmapBody,
-                        ss, ss, false);
+                        headSize, headSize, false);
 
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed

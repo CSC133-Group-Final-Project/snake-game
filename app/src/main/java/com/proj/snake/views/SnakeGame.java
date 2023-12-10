@@ -8,7 +8,6 @@ import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IGameEventListener;
 import com.proj.snake.managers.GameManager;
 import com.proj.snake.managers.GameStateManager;
-import com.proj.snake.utils.ScreenInfo;
 
 public class SnakeGame extends SurfaceView implements IGameEventListener {
     // Flag to check whether the game is paused.
@@ -18,14 +17,12 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
 
     private final GameStateManager gameStateManager;
 
-    private final GameEventPublisher gameEventPublisher;
-
     // This is the constructor method that gets called
     // from SnakeActivity
     public SnakeGame(Context context) {
         super(context);
 
-        gameEventPublisher = new GameEventPublisher();
+        GameEventPublisher gameEventPublisher = new GameEventPublisher();
         gameEventPublisher.addListener(this);
 
         gameManager = new GameManager(context, gameEventPublisher);

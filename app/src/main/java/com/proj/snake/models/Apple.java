@@ -9,6 +9,7 @@ import android.graphics.Point;
 
 import com.proj.snake.R;
 import com.proj.snake.interfaces.IResettableEntity;
+import com.proj.snake.utils.ScreenInfo;
 
 import java.util.Random;
 
@@ -35,7 +36,7 @@ public class Apple implements IResettableEntity {
         location.x = -10;
 
         mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
+        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 3, s * 3, false);
     }
 
     // Public static method to get instance
@@ -52,11 +53,10 @@ public class Apple implements IResettableEntity {
 
     // This is called every time an apple is eaten
     @Override
-    public void reset(){
-        // Choose two random values and place the apple
+    public void reset() {
         Random random = new Random();
-        location.x = random.nextInt(mSpawnRange.x) + 1;
-        location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+        location.x = random.nextInt(mSpawnRange.x - mSize / ScreenInfo.getInstance().getBlockSize()) + 1;
+        location.y = random.nextInt(mSpawnRange.y - mSize / ScreenInfo.getInstance().getBlockSize()) + 1;
     }
 
     // Let SnakeGame know where the apple is

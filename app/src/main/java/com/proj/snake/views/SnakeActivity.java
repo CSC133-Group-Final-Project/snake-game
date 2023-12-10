@@ -18,7 +18,7 @@ public class SnakeActivity extends Activity {
         // Initialize the PongGame object.
         mSnakeGame = new SnakeGame(this);
 
-        // Set the current content view to PongGame view for rendering the game.
+        // Set the current content view to Snake Game view for rendering the game.
         setContentView(mSnakeGame);
     }
 
