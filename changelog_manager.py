@@ -131,6 +131,7 @@ def generate_changelog(repo_path, new_tag):
 
         changelog.write("\n---\n")
 
+
 def check_for_new_tag(repo_path):
     repo = Repo(repo_path)
     # if no tags exist, then a new tag is needed

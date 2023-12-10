@@ -78,12 +78,19 @@ jobs:
       # Noted for main module build [main_project_module]:bundleRelease
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
-    
+
+      # Get Previous Tag
+      - name: Get previous tag
+        run: echo "PREVIOUS_TAG=$(python3 changelog_manager.py current-version --repo-path .)" >> $GITHUB_ENV
+        continue-on-error: true
+      
+      # Check if new tag is needed
       - name: Check for new tag
         id: check_tag
         run: echo "new_tag_needed=$(python3 changelog_manager.py check --repo-path .)" >> $GITHUB_ENV
         continue-on-error: true
     
+      # Check if it is initial tag
       - name: Check if it is initial tag
         if: env.new_tag_needed == 'true'
         run: echo "is_initial_tag=$(python3 changelog_manager.py is-initial-tag --repo-path .)" >> $GITHUB_ENV
@@ -127,7 +134,7 @@ jobs:
       - name: Generate changelog if incremental tag is created
         if: env.new_tag_needed == 'true' && env.is_initial_tag == 'false'
         run: |
-            python3 changelog_manager.py generate --since-tag ${{ steps.check_tag.outputs.previous_tag }} --new-tag ${{ steps.check_tag.outputs.new_tag }} --repo-path . 
+            python3 changelog_manager.py generate --since-tag ${{ env.PREVIOUS_TAG }} --new-tag ${{ env.NEW_TAG }} --repo-path . 
  
       - name: Update running changelog
         run: |
