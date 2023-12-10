@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.util.Log;
 
+import com.proj.snake.R;
 import com.proj.snake.interfaces.IAudioManager;
 import com.proj.snake.utils.GameConstants;
+import com.proj.snake.views.SnakeActivity;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
@@ -71,6 +74,7 @@ public class AudioManagerImpl implements IAudioManager {
             try {
                 loadSound(assetManager, "get_apple.ogg");
                 loadSound(assetManager, "snake_death.ogg");
+                loadBackgroundMusic(assetManager, "pop.mp3");
             } catch (IOException e) {
                 Log.e(TAG, "Failed to load sound files", e);
             }
@@ -124,6 +128,28 @@ public class AudioManagerImpl implements IAudioManager {
     public void reinitialize() {
         if (isMspReleased()) {
             initSounds();
+        }
+    }
+
+    private MediaPlayer mBackgroundMediaPlayer;
+    // Method to load background music
+    private void loadBackgroundMusic(AssetManager assetManager, String fileName) throws IOException {
+        try (AssetFileDescriptor descriptor = assetManager.openFd(fileName)) {
+            if (mBackgroundMediaPlayer != null) {
+                mBackgroundMediaPlayer.release();
+            }
+
+            mBackgroundMediaPlayer = new MediaPlayer();
+            mBackgroundMediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+            mBackgroundMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build());
+            mBackgroundMediaPlayer.setLooping(true);
+            mBackgroundMediaPlayer.prepare();
+            mBackgroundMediaPlayer.start();
+
+            Log.d(TAG, "Loaded background music: " + fileName);
         }
     }
 
