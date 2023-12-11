@@ -6,12 +6,12 @@ import android.view.View;
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.ITouchEventListener;
 
-public class InputController implements View.OnTouchListener {
+public class TouchInputController implements View.OnTouchListener {
 
     private final GameEventPublisher gameEventPublisher;
     private ITouchEventListener touchEventListener;
 
-    public InputController(GameEventPublisher gameEventPublisher) {
+    public TouchInputController(GameEventPublisher gameEventPublisher) {
         this.gameEventPublisher = gameEventPublisher;
     }
 

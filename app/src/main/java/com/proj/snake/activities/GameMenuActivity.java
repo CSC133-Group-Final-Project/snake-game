@@ -6,14 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import com.proj.snake.R;
-import com.proj.snake.adapters.HighScoreAdapter;
 import com.proj.snake.interfaces.IAudioManager;
 import com.proj.snake.managers.AudioManagerImpl;
 import com.proj.snake.managers.GlobalStateManager;
-import com.proj.snake.models.HighScoreBoard;
 import com.proj.snake.utils.NavigationUtils;
 
 public class GameMenuActivity extends Activity {
@@ -38,27 +35,6 @@ public class GameMenuActivity extends Activity {
     private void startGame() {
         Intent intent = new Intent(GameMenuActivity.this, SnakeActivity.class);
         startActivity(intent);
-    }
-    private void showHighScoreDialog() {
-        // Get the current High Scores
-        HighScoreBoard highScoreBoard = HighScoreBoard.getInstance();
-        // Create a Dialog instance
-        final Dialog dialog = new Dialog(this, R.style.CustomDialogTheme); // Apply the custom theme
-        // Set the custom layout
-        dialog.setContentView(R.layout.high_score_layout);
-
-        // Find the ListView and Back button in the layout
-        ListView highScoreList = dialog.findViewById(R.id.highScoreList);
-        Button backButton = dialog.findViewById(R.id.backButton);
-
-        HighScoreAdapter adapter = new HighScoreAdapter(this, R.layout.high_score_item, highScoreBoard.getHighScores(getApplicationContext()));
-        highScoreList.setAdapter(adapter);
-
-        // Close the dialog when the Back button is pressed
-        backButton.setOnClickListener(v -> dialog.dismiss());
-
-        // Display the dialog
-        dialog.show();
     }
 
     private void updateSoundButtonText(Button soundButton) {

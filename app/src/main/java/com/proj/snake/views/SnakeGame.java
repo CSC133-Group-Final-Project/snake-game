@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.proj.snake.R;
-import com.proj.snake.controllers.InputController;
+import com.proj.snake.controllers.TouchInputController;
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IGameEventListener;
 import com.proj.snake.managers.GameManager;
@@ -36,7 +36,7 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
 
         GameRenderer gameRenderer = new GameRenderer(context, getHolder(), gameManager);
 
-        InputController inputController = new InputController(gameEventPublisher);
+        TouchInputController inputController = new TouchInputController(gameEventPublisher);
         inputController.setTouchEventListener(gameManager);
 
         this.setOnTouchListener(inputController);

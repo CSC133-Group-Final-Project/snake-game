@@ -2,18 +2,16 @@ package com.proj.snake.activities;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Switch;
+import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.proj.snake.R;
 import com.proj.snake.managers.AudioManagerImpl;
 import com.proj.snake.managers.GlobalStateManager;
 import com.proj.snake.views.SnakeGame;
-
-import android.widget.Switch;
-import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 // SnakeActivity class is the main Activity for the Pong game.
 // It manages the lifecycle of the PongGame object, ensuring it
@@ -46,7 +44,11 @@ public class SnakeActivity extends Activity {
         soundSwitch.setThumbResource(R.drawable.custom_thumb);
         soundSwitch.setTrackResource(R.drawable.custom_track);
         soundSwitch.setThumbTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.switchThumbColor))); // Custom thumb color
-        soundSwitch.setBackgroundColor(Color.TRANSPARENT);
+        if (GlobalStateManager.getInstance().isSoundEnabled()) {
+            soundSwitch.setChecked(true);
+        } else {
+            soundSwitch.setChecked(false);
+        }
         TextView soundStatusText = findViewById(R.id.soundStatusText);
 
         // Initialize the text based on the initial state of the Switch
