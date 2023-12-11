@@ -137,15 +137,16 @@ public class Snake implements IResettableEntity {
     // Get the snake ready for a new game
     @Override
     public void reset() {
-
         // Reset the heading
         heading = Heading.RIGHT;
 
-        // Delete the old contents of the ArrayList
+        // Clear old segments
         segmentLocations.clear();
 
-        // Start with a single snake segment
-        segmentLocations.add(new Point(GameConstants.NUM_BLOCKS_WIDE / 2, ScreenInfo.getInstance().getNumBlocksHigh() / 2));
+        // Ensure the initial position is well within the grid
+        int initialX = GameConstants.NUM_BLOCKS_WIDE / 2;
+        int initialY = ScreenInfo.getInstance().getNumBlocksHigh() / 2;
+        segmentLocations.add(new Point(initialX, initialY));
     }
 
     public void move() {
@@ -194,8 +195,8 @@ public class Snake implements IResettableEntity {
                 break;
         }
 
-        // Check for collisions after moving the head
-        collisionEventPublisher.checkCollisionWithWall(head, mMoveRange);
+        int headSize = mSegmentSize * 3;
+        collisionEventPublisher.checkCollisionWithWall(head, mMoveRange, headSize);
         collisionEventPublisher.checkCollisionWithSelf(segmentLocations);
         collisionEventPublisher.checkCollisionWithFood(segmentLocations, Apple.getRunningInstance().getLocation());
     }
@@ -220,56 +221,37 @@ public class Snake implements IResettableEntity {
     }
 
     public void draw(Canvas canvas, Paint paint) {
-
         // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
-            // All the code from this method goes here
-            // Draw the head
-            switch (heading) {
-                case RIGHT:
-                    canvas.drawBitmap(mBitmapHeadRight,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
-                    break;
+            // Draw the head centered on its grid cell
+            Bitmap headBitmap = getHeadBitmap(); // Get the correct head bitmap based on direction
+            int headX = segmentLocations.get(0).x * mSegmentSize + mSegmentSize / 2 - headBitmap.getWidth() / 2;
+            int headY = segmentLocations.get(0).y * mSegmentSize + mSegmentSize / 2 - headBitmap.getHeight() / 2;
+            canvas.drawBitmap(headBitmap, headX, headY, paint);
 
-                case LEFT:
-                    canvas.drawBitmap(mBitmapHeadLeft,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
-                    break;
-
-                case UP:
-                    canvas.drawBitmap(mBitmapHeadUp,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
-                    break;
-
-                case DOWN:
-                    canvas.drawBitmap(mBitmapHeadDown,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
-                    break;
-            }
-
-            // Draw the snake body one block at a time
+            // Draw the snake body one block at a time, centered on each grid cell
             for (int i = 1; i < segmentLocations.size(); i++) {
-                canvas.drawBitmap(mBitmapBody,
-                        segmentLocations.get(i).x
-                                * mSegmentSize,
-                        segmentLocations.get(i).y
-                                * mSegmentSize, paint);
+                int bodyX = segmentLocations.get(i).x * mSegmentSize + mSegmentSize / 2 - mBitmapBody.getWidth() / 2;
+                int bodyY = segmentLocations.get(i).y * mSegmentSize + mSegmentSize / 2 - mBitmapBody.getHeight() / 2;
+                canvas.drawBitmap(mBitmapBody, bodyX, bodyY, paint);
             }
         }
     }
 
+    private Bitmap getHeadBitmap() {
+        switch (heading) {
+            case RIGHT:
+                return mBitmapHeadRight;
+            case LEFT:
+                return mBitmapHeadLeft;
+            case UP:
+                return mBitmapHeadUp;
+            case DOWN:
+                return mBitmapHeadDown;
+            default:
+                return mBitmapHeadRight; // Default case
+        }
+    }
 
     // Handle changing direction
     public void switchHeading(MotionEvent motionEvent) {
