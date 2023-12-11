@@ -5,11 +5,13 @@ import android.view.View;
 
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.ITouchEventListener;
+import com.proj.snake.models.Snake;
 
 public class TouchInputController implements View.OnTouchListener {
 
     private final GameEventPublisher gameEventPublisher;
     private ITouchEventListener touchEventListener;
+    private Snake mSnake = Snake.getRunningInstance();
 
     public TouchInputController(GameEventPublisher gameEventPublisher) {
         this.gameEventPublisher = gameEventPublisher;
@@ -26,11 +28,8 @@ public class TouchInputController implements View.OnTouchListener {
         // When the screen is touched.
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {// Notify to unpause the game.
             gameEventPublisher.notifyUnpause();
-            // Calling the onScreenTouched method on touchEventListener,
-            touchEventListener.onScreenTouched(motionEvent);
-            // When the touch is released.
+            mSnake.switchHeading(motionEvent);
         }
-        // Returning true to indicate that the event has been handled.
         return true;
     }
 }
