@@ -1,7 +1,9 @@
-package com.proj.snake.views;
+package com.proj.snake.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.proj.snake.views.SnakeGame;
 
 // SnakeActivity class is the main Activity for the Pong game.
 // It manages the lifecycle of the PongGame object, ensuring it

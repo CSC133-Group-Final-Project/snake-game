@@ -1,4 +1,4 @@
-package com.proj.snake.views;
+package com.proj.snake.activities;
 
 import android.app.Activity;
 import android.app.Dialog;

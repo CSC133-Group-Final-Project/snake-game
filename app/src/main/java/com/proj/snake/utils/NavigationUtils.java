@@ -9,7 +9,7 @@ import android.widget.ListView;
 import com.proj.snake.R;
 import com.proj.snake.adapters.HighScoreAdapter;
 import com.proj.snake.models.HighScoreBoard;
-import com.proj.snake.views.GameMenuActivity;
+import com.proj.snake.activities.GameMenuActivity;
 
 public class NavigationUtils {
 

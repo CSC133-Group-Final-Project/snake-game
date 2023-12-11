@@ -12,12 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Snake"
         tools:targetApi="31">
-        <activity android:name=".views.SnakeActivity"
+        <activity android:name=".activities.SnakeActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:screenOrientation="landscape"
             android:exported="true">
         </activity>
-        <activity android:name=".views.GameMenuActivity"
+        <activity android:name=".activities.GameMenuActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:exported="true">
             <intent-filter>
