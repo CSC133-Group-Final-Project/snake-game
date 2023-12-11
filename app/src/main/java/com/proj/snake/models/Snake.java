@@ -18,6 +18,7 @@ import com.proj.snake.utils.ScreenInfo;
 import java.util.ArrayList;
 
 public class Snake implements IResettableEntity {
+    private static Snake instance;
 
     // The location in the grid of all the segments
     private ArrayList<Point> segmentLocations;
@@ -38,8 +39,6 @@ public class Snake implements IResettableEntity {
     private boolean moveThisFrame = true;
 
     private final CollisionEventPublisher collisionEventPublisher;
-
-
 
     public void onCollisionWithFood() {
         segmentLocations.add(new Point(-10, -10));
@@ -62,7 +61,19 @@ public class Snake implements IResettableEntity {
     // A bitmap for the body
     private Bitmap mBitmapBody;
 
-    public Snake(Context context, Point mr, int ss, CollisionEventPublisher collisionEventPublisher) {
+    // Public static method to get the instance
+    public static synchronized Snake getInstance(Context context, Point mr, int ss, CollisionEventPublisher collisionEventPublisher) {
+        if (instance == null) {
+            instance = new Snake(context, mr, ss, collisionEventPublisher);
+        }
+        return instance;
+    }
+
+    public static synchronized Snake getRunningInstance() {
+        return instance;
+    }
+
+    private Snake(Context context, Point mr, int ss, CollisionEventPublisher collisionEventPublisher) {
         // Initialize our ArrayList
         segmentLocations = new ArrayList<>();
 
@@ -252,6 +263,25 @@ public class Snake implements IResettableEntity {
                 return mBitmapHeadRight; // Default case
         }
     }
+
+    // Handle changing direction with key events
+    public void switchDirection(int direction) {
+        switch (direction) {
+            case 0:
+                heading = Heading.UP;
+                break;
+            case 1:
+                heading = Heading.RIGHT;
+                break;
+            case 2:
+                heading = Heading.DOWN;
+                break;
+            case 3:
+                heading = Heading.LEFT;
+                break;
+        }
+    }
+
 
     // Handle changing direction
     public void switchHeading(MotionEvent motionEvent) {
