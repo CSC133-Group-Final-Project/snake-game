@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.proj.snake.R;
+import com.proj.snake.controllers.KeyboardInputController;
 import com.proj.snake.controllers.TouchInputController;
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IGameEventListener;
@@ -37,9 +38,13 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
         GameRenderer gameRenderer = new GameRenderer(context, getHolder(), gameManager);
 
         TouchInputController inputController = new TouchInputController(gameEventPublisher);
-        inputController.setTouchEventListener(gameManager);
-
         this.setOnTouchListener(inputController);
+
+        // Set this as the key listener
+        KeyboardInputController keyboardController = new KeyboardInputController(gameEventPublisher);
+        this.setFocusable(true);
+        this.setOnKeyListener(keyboardController);
+
 
         gameStateManager = new GameStateManager(gameManager, gameRenderer, gameEventPublisher);
     }
@@ -70,7 +75,7 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
     @Override
     public void onGameOver() {
         mPaused = true;
-        ((Activity) getContext()).runOnUiThread(() -> showGameOverDialog());
+        ((Activity) getContext()).runOnUiThread(this::showGameOverDialog);
 
         //gameManager.reset();
     }
@@ -115,5 +120,4 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
 
         dialog.show();
     }
-
 }
