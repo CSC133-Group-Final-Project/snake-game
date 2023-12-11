@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.util.Log;
 
@@ -29,7 +30,28 @@ public class AudioManagerImpl implements IAudioManager {
     private final Context myContext;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private boolean isSoundEnabled = true; // Default to true
+    private MediaPlayer mBackgroundMediaPlayer;
 
+    // Method to load background music
+    private void loadBackgroundMusic(AssetManager assetManager, String fileName) throws IOException {
+        try (AssetFileDescriptor descriptor = assetManager.openFd(fileName)) {
+            if (mBackgroundMediaPlayer != null) {
+                mBackgroundMediaPlayer.release();
+            }
+
+            mBackgroundMediaPlayer = new MediaPlayer();
+            mBackgroundMediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+            mBackgroundMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build());
+            mBackgroundMediaPlayer.setLooping(true);
+            mBackgroundMediaPlayer.prepare();
+            mBackgroundMediaPlayer.start();
+
+            Log.d(TAG, "Loaded background music: " + fileName);
+        }
+    }
 
     // Private constructor
     private AudioManagerImpl(Context context) {
@@ -73,6 +95,7 @@ public class AudioManagerImpl implements IAudioManager {
             try {
                 loadSound(assetManager, "get_apple.ogg");
                 loadSound(assetManager, "snake_death.ogg");
+                loadBackgroundMusic(assetManager, "pop.mp3");
             } catch (IOException e) {
                 Log.e(TAG, "Failed to load sound files", e);
             }
@@ -152,6 +175,8 @@ public class AudioManagerImpl implements IAudioManager {
             initSounds();
         }
     }
+
+
 
     // Method to check if SoundPool is released
     public boolean isMspReleased() {
