@@ -95,7 +95,6 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
         // Set up button listeners
         viewHighScoresButton.setOnClickListener(v -> {
             // Handle view high scores action
-            dialog.dismiss();
             NavigationUtils.showHighScoreDialog((Activity) getContext());
 
         });
