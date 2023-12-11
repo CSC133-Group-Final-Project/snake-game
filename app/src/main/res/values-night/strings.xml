@@ -2,8 +2,11 @@
 <resources>
     <string name="play">Play</string>
     <string name="high_score">High Score</string>
-    <string name="sound_on_off">Sound On/Off</string>
     <string name="about">About</string>
     <string name="exit">Exit</string>
     <string name="snake_game">Snake Game</string>
+    <string name="enter_username">Enter username</string>
+    <string name="sound_on">Sound On</string>
+    <string name="sound_off">Sound Off</string>
+    <string name="about_text">Classic Snake Game By Keyur, Nonika, Rayanne, Sukhdeep</string>
 </resources>
