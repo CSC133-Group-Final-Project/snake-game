@@ -22,6 +22,7 @@ public class GameMenuActivity extends Activity {
         Button submitButton = dialog.findViewById(R.id.usernameSubmitButton);
 
         submitButton.setOnClickListener(v -> {
+            dialog.dismiss();
             String username = usernameEditText.getText().toString();
             if (!username.isEmpty()) {
                 GlobalStateManager.getInstance().setUsername(username);

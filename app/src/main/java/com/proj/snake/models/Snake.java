@@ -253,6 +253,24 @@ public class Snake implements IResettableEntity {
         }
     }
 
+    // Handle changing direction with key events
+    public void switchDirection(int direction) {
+        switch (direction) {
+            case 0:
+                heading = Heading.UP;
+                break;
+            case 1:
+                heading = Heading.RIGHT;
+                break;
+            case 2:
+                heading = Heading.DOWN;
+                break;
+            case 3:
+                heading = Heading.LEFT;
+                break;
+        }
+    }
+
     // Handle changing direction
     public void switchHeading(MotionEvent motionEvent) {
 
