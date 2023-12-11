@@ -88,6 +88,7 @@ public class GameRenderer extends SurfaceView {
             // Draw the score
             mCanvas.drawText("" + gameManager.getScore(), 20, 120, mPaint);
 
+
             // Draw the apple and the snake
             gameManager.getApple().draw(mCanvas, mPaint);
             gameManager.getSnake().draw(mCanvas, mPaint);

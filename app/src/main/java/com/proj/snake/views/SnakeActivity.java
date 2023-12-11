@@ -14,8 +14,9 @@ public class SnakeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String username = getIntent().getStringExtra("USERNAME");
 
-        // Initialize the PongGame object.
+        // Initialize the SnakeGame object.
         mSnakeGame = new SnakeGame(this);
 
         // Set the current content view to Snake Game view for rendering the game.
