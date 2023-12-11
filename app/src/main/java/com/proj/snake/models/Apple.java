@@ -55,8 +55,14 @@ public class Apple implements IResettableEntity {
     @Override
     public void reset() {
         Random random = new Random();
-        location.x = random.nextInt(mSpawnRange.x - mSize / ScreenInfo.getInstance().getBlockSize()) + 1;
-        location.y = random.nextInt(mSpawnRange.y - mSize / ScreenInfo.getInstance().getBlockSize()) + 1;
+
+        // Adjusted for the larger apple size (3 cells)
+        int maxX = mSpawnRange.x - 3; // 3 cells width
+        int maxY = mSpawnRange.y - 3; // 3 cells height
+
+        // Randomly generate a new location within the adjusted boundaries
+        location.x = random.nextInt(maxX + 1);
+        location.y = random.nextInt(maxY + 1);
     }
 
     // Let SnakeGame know where the apple is
@@ -66,9 +72,12 @@ public class Apple implements IResettableEntity {
     }
 
     // Draw the apple
-    public void draw(Canvas canvas, Paint paint){
-        canvas.drawBitmap(mBitmapApple,
-                location.x * mSize, location.y * mSize, paint);
+    public void draw(Canvas canvas, Paint paint) {
+        // Calculate the top-left coordinates to draw the apple image
+        // so that it's centered on its location
+        int drawX = location.x * mSize + mSize / 2 - mBitmapApple.getWidth() / 2;
+        int drawY = location.y * mSize + mSize / 2 - mBitmapApple.getHeight() / 2;
 
+        canvas.drawBitmap(mBitmapApple, drawX, drawY, paint);
     }
 }
