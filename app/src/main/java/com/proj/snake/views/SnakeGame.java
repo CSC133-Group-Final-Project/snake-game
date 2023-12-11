@@ -25,6 +25,17 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
 
     private final GameStateManager gameStateManager;
 
+    // Callback interface for game events
+    public interface GameEventListener {
+        void onGameOver();
+    }
+
+    private GameEventListener gameEventListener;
+
+    public void setGameEventListener(GameEventListener listener) {
+        this.gameEventListener = listener;
+    }
+
     // This is the constructor method that gets called
     // from SnakeActivity
     public SnakeGame(Context context, AttributeSet attrs) {
@@ -75,49 +86,18 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
     @Override
     public void onGameOver() {
         mPaused = true;
-        ((Activity) getContext()).runOnUiThread(this::showGameOverDialog);
+        if (gameEventListener != null) {
+            gameEventListener.onGameOver();
+        }
+    }
 
-        //gameManager.reset();
+    public GameManager getGameManager() {
+        return gameManager;
     }
 
     // Returns whether the game is paused.
     @Override
     public boolean isPaused() {
         return mPaused;
-    }
-
-    private void showGameOverDialog() {
-        final Dialog dialog = new Dialog(getContext(), R.style.CustomDialogTheme);
-        dialog.setContentView(R.layout.game_over_layout);
-
-        TextView scoreText = dialog.findViewById(R.id.scoreText);
-        Button viewHighScoresButton = dialog.findViewById(R.id.viewHighScoresButton);
-        Button playAgainButton = dialog.findViewById(R.id.playAgainButton);
-        Button mainMenuButton = dialog.findViewById(R.id.mainMenuButton);
-
-        // Update the score text
-        scoreText.setText("Score: " + gameManager.getScore());
-
-        // Set up button listeners
-        viewHighScoresButton.setOnClickListener(v -> {
-            // Handle view high scores action
-            NavigationUtils.showHighScoreDialog((Activity) getContext());
-
-        });
-
-        playAgainButton.setOnClickListener(v -> {
-            // Handle play again action
-            dialog.dismiss();
-            gameManager.reset();
-            resume(); // Resume the game
-        });
-
-        mainMenuButton.setOnClickListener(v -> {
-            // Handle return to main menu action
-            dialog.dismiss();
-            NavigationUtils.returnToMainMenu((Activity) getContext());
-        });
-
-        dialog.show();
     }
 }

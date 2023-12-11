@@ -1,8 +1,11 @@
 package com.proj.snake.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -11,12 +14,13 @@ import androidx.core.content.ContextCompat;
 import com.proj.snake.R;
 import com.proj.snake.managers.AudioManagerImpl;
 import com.proj.snake.managers.GlobalStateManager;
+import com.proj.snake.utils.NavigationUtils;
 import com.proj.snake.views.SnakeGame;
 
 // SnakeActivity class is the main Activity for the Pong game.
 // It manages the lifecycle of the PongGame object, ensuring it
 // pauses and resumes as the Activity lifecycle changes.
-public class SnakeActivity extends Activity {
+public class SnakeActivity extends Activity implements SnakeGame.GameEventListener {
     // mPongGame is an instance of the PongGame class which handles the game logic and rendering.
     private SnakeGame mSnakeGame;
 
@@ -38,6 +42,8 @@ public class SnakeActivity extends Activity {
         // Find the SnakeGame view object in the activity's view hierarchy.
         // This enables the SnakeGame object to perform rendering.
         mSnakeGame = findViewById(R.id.snakeGame);
+        mSnakeGame.setGameEventListener(this);
+
 
         // Find the Switch and TextView in the sound_checkbox_layout.xml layout
         Switch soundSwitch = findViewById(R.id.soundSwitch);
@@ -75,6 +81,54 @@ public class SnakeActivity extends Activity {
 
     }
 
+    // Called when the game is over.
+    @Override
+    public void onGameOver() {
+        runOnUiThread(() -> {
+            // Show the game over dialog
+            showGameOverDialog();
+        });
+    }
+
+    // Show the game over dialog
+    private void showGameOverDialog() {
+        // Create a new instance of the Dialog
+        final Dialog dialog = new Dialog(this, R.style.CustomDialogTheme);
+        dialog.setContentView(R.layout.game_over_layout);
+
+        // Find the views within the dialog
+        TextView scoreText = dialog.findViewById(R.id.scoreText);
+        Button viewHighScoresButton = dialog.findViewById(R.id.viewHighScoresButton);
+        Button playAgainButton = dialog.findViewById(R.id.playAgainButton);
+        Button mainMenuButton = dialog.findViewById(R.id.mainMenuButton);
+
+        // Update the score text with the score from the game
+        scoreText.setText("Score: " + mSnakeGame.getGameManager().getScore());
+
+        // Set up the button listeners
+        viewHighScoresButton.setOnClickListener(v -> {
+            // Handle the action for viewing high scores
+            NavigationUtils.showHighScoreDialog(this);
+            dialog.dismiss();
+        });
+
+        playAgainButton.setOnClickListener(v -> {
+            // Handle the action for playing again
+            dialog.dismiss();
+            mSnakeGame.getGameManager().reset();
+            mSnakeGame.resume(); // Resume the game
+        });
+
+        mainMenuButton.setOnClickListener(v -> {
+            // Handle the action for returning to the main menu
+            dialog.dismiss();
+            mSnakeGame = null;
+            NavigationUtils.returnToMainMenu(this);
+        });
+
+        // Show the dialog
+        dialog.show();
+    }
 
 
     // Called after onStop() when the current Activity is being re-displayed to the user.
