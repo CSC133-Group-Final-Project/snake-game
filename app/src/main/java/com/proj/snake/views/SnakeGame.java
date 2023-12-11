@@ -1,13 +1,19 @@
 package com.proj.snake.views;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.view.SurfaceView;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.proj.snake.R;
 import com.proj.snake.controllers.InputController;
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IGameEventListener;
 import com.proj.snake.managers.GameManager;
 import com.proj.snake.managers.GameStateManager;
+import com.proj.snake.utils.NavigationUtils;
 
 public class SnakeGame extends SurfaceView implements IGameEventListener {
     // Flag to check whether the game is paused.
@@ -63,7 +69,9 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
     @Override
     public void onGameOver() {
         mPaused = true;
-        gameManager.reset();
+        ((Activity) getContext()).runOnUiThread(() -> showGameOverDialog());
+
+        //gameManager.reset();
     }
 
     // Returns whether the game is paused.
@@ -71,4 +79,41 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
     public boolean isPaused() {
         return mPaused;
     }
+
+    private void showGameOverDialog() {
+        final Dialog dialog = new Dialog(getContext(), R.style.CustomDialogTheme);
+        dialog.setContentView(R.layout.game_over_layout);
+
+        TextView scoreText = dialog.findViewById(R.id.scoreText);
+        Button viewHighScoresButton = dialog.findViewById(R.id.viewHighScoresButton);
+        Button playAgainButton = dialog.findViewById(R.id.playAgainButton);
+        Button mainMenuButton = dialog.findViewById(R.id.mainMenuButton);
+
+        // Update the score text
+        scoreText.setText("Score: " + gameManager.getScore());
+
+        // Set up button listeners
+        viewHighScoresButton.setOnClickListener(v -> {
+            // Handle view high scores action
+            dialog.dismiss();
+            NavigationUtils.showHighScoreDialog((Activity) getContext());
+
+        });
+
+        playAgainButton.setOnClickListener(v -> {
+            // Handle play again action
+            dialog.dismiss();
+            gameManager.reset();
+            resume(); // Resume the game
+        });
+
+        mainMenuButton.setOnClickListener(v -> {
+            // Handle return to main menu action
+            dialog.dismiss();
+            NavigationUtils.returnToMainMenu((Activity) getContext());
+        });
+
+        dialog.show();
+    }
+
 }
