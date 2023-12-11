@@ -4,12 +4,14 @@ package com.proj.snake.managers;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.proj.snake.events.CollisionEventPublisher;
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IAudioManager;
 import com.proj.snake.interfaces.ICollisionEventListener;
+import com.proj.snake.interfaces.IKeyboardEventListener;
 import com.proj.snake.interfaces.IResettableEntity;
 import com.proj.snake.interfaces.ITouchEventListener;
 import com.proj.snake.models.Apple;
@@ -24,7 +26,7 @@ import com.proj.snake.utils.ScreenInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameManager implements ITouchEventListener, ICollisionEventListener {
+public class GameManager implements ICollisionEventListener {
     // A snake ssss
     private final Snake mSnake;
     private final Apple mApple;
@@ -62,12 +64,13 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
                         ScreenInfo.getInstance().getNumBlocksHigh()),
                 ScreenInfo.getInstance().getBlockSize());
 
-        mSnake = new Snake(context,
+        mSnake = Snake.getInstance(context,
                 new Point(GameConstants.NUM_BLOCKS_WIDE,
                         ScreenInfo.getInstance().getNumBlocksHigh()),
                 ScreenInfo.getInstance().getBlockSize(), collisionEventPublisher);
 
         this.gameEventPublisher = gameEventPublisher;
+
 
         // Initialize the SoundPool
         audioManager = AudioManagerImpl.getInstance(context);
@@ -119,10 +122,10 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         // There are 1000 milliseconds in a second
         final long MILLIS_PER_SECOND = 1000;
         // Are we due to update the frame
-        if(mNextFrameTime <= System.currentTimeMillis()){
+        if (mNextFrameTime <= System.currentTimeMillis()) {
             // Tenth of a second has passed
             // Setup when the next update will be triggered
-            mNextFrameTime =System.currentTimeMillis()
+            mNextFrameTime = System.currentTimeMillis()
                     + MILLIS_PER_SECOND / TARGET_FPS;
             // Return true so that the update and draw
             // methods are executed
@@ -136,18 +139,6 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         mSnake.move();
     }
 
-
-    // Handle Bat movement events based on callback from TouchInputHandler.
-    @Override
-    public void onScreenTouched(MotionEvent motionEvent) {
-        if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            if (gameEventPublisher.notifyIsPaused()) {
-                reset();
-            }
-            // Let the Snake class handle the input
-            mSnake.switchHeading(motionEvent);
-        }
-    }
 
     public boolean isGamePaused() {
         return gameEventPublisher.notifyIsPaused();
@@ -198,6 +189,5 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
     public SlowDownPowerUp getSlowDownPowerUp() {
         return slowDownPowerUp;
     }
+
 }
-
-
