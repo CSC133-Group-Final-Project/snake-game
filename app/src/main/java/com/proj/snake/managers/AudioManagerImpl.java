@@ -106,6 +106,17 @@ public class AudioManagerImpl implements IAudioManager {
         }
     }
 
+    // Main menu background music
+    public void playMainMenuMusic() {
+        if (!isSoundEnabled) return; // Do not play if sound is disabled
+        if (mSP == null) {
+            Log.e(TAG, "SoundPool instance is null");
+            return;
+        }
+        mSP.autoPause(); // Pause all sounds if sound is disabled
+        mSP.autoResume(); // Resume all sounds if sound is enabled
+    }
+
     // Method to play a sound
     public void play(int soundID) {
         if (!isSoundEnabled) return; // Do not play if sound is disabled

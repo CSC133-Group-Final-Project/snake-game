@@ -8,4 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="orange_500">#FFA726</color>
+    <color name="switchThumbColor">#FF5722</color>
+    <color name="switchTrackColor">#9E9E9E</color>
+    <color name="switchTextColor">#000000</color>
 </resources>

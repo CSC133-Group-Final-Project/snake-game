@@ -3,6 +3,7 @@ package com.proj.snake.views;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,8 +26,8 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
 
     // This is the constructor method that gets called
     // from SnakeActivity
-    public SnakeGame(Context context) {
-        super(context);
+    public SnakeGame(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
         GameEventPublisher gameEventPublisher = new GameEventPublisher();
         gameEventPublisher.addListener(this);
