@@ -13,9 +13,11 @@ import com.proj.snake.interfaces.ICollisionEventListener;
 import com.proj.snake.interfaces.IResettableEntity;
 import com.proj.snake.interfaces.ITouchEventListener;
 import com.proj.snake.models.Apple;
+import com.proj.snake.models.HighScore;
+import com.proj.snake.models.HighScoreBoard;
+import com.proj.snake.models.Score;
 import com.proj.snake.models.SlowDownPowerUp;
 import com.proj.snake.models.Snake;
-import com.proj.snake.models.HighScoreBoard;
 import com.proj.snake.utils.GameConstants;
 import com.proj.snake.utils.ScreenInfo;
 
@@ -29,18 +31,23 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
     private final GameEventPublisher gameEventPublisher;
     private final IAudioManager audioManager;
 
-    private final HighScoreBoard scoreBoard;
+    private final Score scoreBoard;
 
     private SlowDownPowerUp slowDownPowerUp;
 
     private final Point spawnRange;
 
+    private final String playerName = GlobalStateManager.getInstance().getUsername();
 
     private static long mNextFrameTime; // the time the next frame should be drawn
     private final List<IResettableEntity> resettables = new ArrayList<>();
 
+    // store context passed in from SnakeActivity
+    private Context mContext;
+
 
     public GameManager(Context context, GameEventPublisher gameEventPublisher) {
+        mContext = context;
         // Initialize screen info.
         ScreenInfo.init(context);
 
@@ -65,8 +72,10 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         // Initialize the SoundPool
         audioManager = AudioManagerImpl.getInstance(context);
 
-        // Initialize the Highscore board
-        scoreBoard = HighScoreBoard.getInstance();
+        // Initialize the score board
+        scoreBoard = Score.getInstance();
+
+        // Initialize the high score
 
         // Add resettable entities to the list of resettables.
         resettables.add(mSnake);
@@ -164,6 +173,8 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         mApple.reset();
         audioManager.play(GameConstants.EAT_SOUND);
         scoreBoard.addScore();
+        HighScore highScore = new HighScore(playerName, scoreBoard.getScore());
+        HighScoreBoard.getInstance().addScore(mContext, highScore);
         mSnake.grow();
 
         // Check for collision with SlowDownPowerUp
