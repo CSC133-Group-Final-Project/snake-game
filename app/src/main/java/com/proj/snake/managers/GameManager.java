@@ -64,7 +64,7 @@ public class GameManager implements ICollisionEventListener {
                         ScreenInfo.getInstance().getNumBlocksHigh()),
                 ScreenInfo.getInstance().getBlockSize());
 
-        mSnake = Snake.getInstance(context,
+        mSnake = new Snake(context,
                 new Point(GameConstants.NUM_BLOCKS_WIDE,
                         ScreenInfo.getInstance().getNumBlocksHigh()),
                 ScreenInfo.getInstance().getBlockSize(), collisionEventPublisher);
@@ -189,5 +189,4 @@ public class GameManager implements ICollisionEventListener {
     public SlowDownPowerUp getSlowDownPowerUp() {
         return slowDownPowerUp;
     }
-
 }
