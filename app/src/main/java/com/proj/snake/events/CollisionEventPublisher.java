@@ -12,7 +12,6 @@ public class CollisionEventPublisher {
     // Assume new class variables headSize and bodySize
     private final List<ICollisionEventListener> listeners = new ArrayList<>();
 
-    private final int snakeSize = ScreenInfo.getInstance().getBlockSize();
 
     // Method to add a collision event listener
     public void addListener(ICollisionEventListener listener) {
@@ -25,16 +24,21 @@ public class CollisionEventPublisher {
     }
 
     // Check collision with wall
-    public void checkCollisionWithWall(Point head, Point moveRange) {
-        int gridSize = snakeSize;
-        int headRight = head.x * gridSize + snakeSize;
-        int headBottom = head.y * gridSize + snakeSize;
+    // Method to check collision with wall
+    public void checkCollisionWithWall(Point head, Point moveRange, int headSize) {
+        // Calculate the bounds of the snake's head
+        int headLeft = head.x * headSize;
+        int headTop = head.y * headSize;
+        int headRight = headLeft + headSize;
+        int headBottom = headTop + headSize;
 
-        if (head.x < 0 || headRight > moveRange.x * gridSize ||
-                head.y < 0 || headBottom > moveRange.y * gridSize) {
+        // Check if any part of the head is outside the grid
+        if (headLeft < 0 || headRight > moveRange.x * headSize ||
+                headTop < 0 || headBottom > moveRange.y * headSize) {
             publishCollisionWithWall();
         }
     }
+
     // Check collision with self
     public void checkCollisionWithSelf(List<Point> segmentLocations) {
         Point head = segmentLocations.get(0);
@@ -48,27 +52,29 @@ public class CollisionEventPublisher {
 
     // Method to check collision with food
     public void checkCollisionWithFood(List<Point> segmentLocations, Point foodLocation) {
-        int gridSize = snakeSize;
+        int gridSize = ScreenInfo.getInstance().getBlockSize();
         Point head = segmentLocations.get(0);
 
-        // Calculate the bounds of the snake's head
-        int headLeft = head.x * gridSize;
-        int headTop = head.y * gridSize;
-        int headRight = headLeft + snakeSize; // Assuming the snake is one grid size
-        int headBottom = headTop + snakeSize;
+        // Calculate the bounds of the snake's head, centered on its grid cell
+        double headLeft = head.x * gridSize + gridSize / 2 - gridSize * 1.5;
+        double headTop = head.y * gridSize + gridSize / 2 - gridSize * 1.5;
+        double headRight = headLeft + gridSize * 2;
+        double headBottom = headTop + gridSize * 2;
 
-        // Calculate the bounds of the food
-        int foodLeft = foodLocation.x * gridSize;
-        int foodTop = foodLocation.y * gridSize;
-        int foodRight = foodLeft + gridSize; // Assuming the food is one grid size
-        int foodBottom = foodTop + gridSize;
+        // Calculate the bounds of the apple, centered on its grid cell
+        double appleLeft = foodLocation.x * gridSize + gridSize / 2 - gridSize * 1.5;
+        double appleTop = foodLocation.y * gridSize + gridSize / 2 - gridSize * 1.5;
+        double appleRight = appleLeft + gridSize * 2;
+        double appleBottom = appleTop + gridSize * 2;
 
         // Check if the rectangles overlap
-        if (headLeft < foodRight && headRight > foodLeft &&
-                headTop < foodBottom && headBottom > foodTop) {
+        if (headRight > appleLeft && headLeft < appleRight &&
+                headBottom > appleTop && headTop < appleBottom) {
             publishCollisionWithFood();
         }
     }
+
+
     // Method to check collision with power-up
     public void checkCollisionWithPowerUp(List<Point> segmentLocations, Point powerUpLocation) {
         if (segmentLocations.get(0).x == powerUpLocation.x && segmentLocations.get(0).y == powerUpLocation.y) {
