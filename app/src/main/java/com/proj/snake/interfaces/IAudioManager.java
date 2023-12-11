@@ -9,4 +9,9 @@ public interface IAudioManager {
     boolean isMspReleased();
     // Reinitializes the sound manager.
     void reinitialize();
+
+    // Toggles the sound on/off.
+    void toggleSound();
+
+    boolean isSoundEnabled();
 }

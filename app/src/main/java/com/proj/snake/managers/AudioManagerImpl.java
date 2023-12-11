@@ -28,6 +28,8 @@ public class AudioManagerImpl implements IAudioManager {
 
     private final Context myContext;
     private final Executor executor = Executors.newSingleThreadExecutor();
+    private boolean isSoundEnabled = true; // Default to true
+
 
     // Private constructor
     private AudioManagerImpl(Context context) {
@@ -77,6 +79,14 @@ public class AudioManagerImpl implements IAudioManager {
         });
     }
 
+    // Method to deinitalize sounds
+    public void deinitSounds() {
+        if (mSP != null) {
+            mSP.release();
+            mSP = null;
+        }
+    }
+
     // Method to load a sound file
     private void loadSound(AssetManager assetManager, String fileName) throws IOException {
         try (AssetFileDescriptor descriptor = assetManager.openFd(fileName)) {
@@ -98,6 +108,7 @@ public class AudioManagerImpl implements IAudioManager {
 
     // Method to play a sound
     public void play(int soundID) {
+        if (!isSoundEnabled) return; // Do not play if sound is disabled
         if (mSP == null) {
             Log.e(TAG, "SoundPool instance is null");
             return;
@@ -118,6 +129,21 @@ public class AudioManagerImpl implements IAudioManager {
         } else {
             Log.e(TAG, "Requested sound ID not loaded: " + soundID);
         }
+    }
+
+    @Override
+    // Toggle sound on/off
+    public void toggleSound() {
+        isSoundEnabled = !isSoundEnabled;
+        if (!isSoundEnabled) {
+            mSP.autoPause(); // Pause all sounds if sound is disabled
+        }
+    }
+
+    @Override
+    // Getter for sound status
+    public boolean isSoundEnabled() {
+        return isSoundEnabled;
     }
 
     // Method to reinitialize the sounds
