@@ -32,12 +32,11 @@ public class AudioManagerImpl implements IAudioManager {
     private boolean isSoundEnabled = true; // Default to true
     private MediaPlayer mBackgroundMediaPlayer;
 
-    private void loadBackgroundMusic(AssetManager assetManager, String fileName) throws IOException {
-        try (AssetFileDescriptor descriptor = assetManager.openFd(fileName)) {
-            if (mBackgroundMediaPlayer != null) {
-                mBackgroundMediaPlayer.release();
-            }
-
+    // Method to load background music
+    public void loadBackgroundMusic() {
+        AssetManager assetManager = myContext.getAssets();
+        try {
+            AssetFileDescriptor descriptor = assetManager.openFd("pop.mp3");
             mBackgroundMediaPlayer = new MediaPlayer();
             mBackgroundMediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
             mBackgroundMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
@@ -45,11 +44,40 @@ public class AudioManagerImpl implements IAudioManager {
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .build());
             mBackgroundMediaPlayer.setLooping(true);
-            mBackgroundMediaPlayer.prepare();
-            mBackgroundMediaPlayer.start();
-
-            Log.d(TAG, "Loaded background music: " + fileName);
+            mBackgroundMediaPlayer.prepare(); // Synchronously prepare the media player
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load background music", e);
         }
+    }
+
+    // Method to play background music
+    public void playBackgroundMusic() {
+        if (isSoundEnabled && mBackgroundMediaPlayer != null && !mBackgroundMediaPlayer.isPlaying()) {
+            mBackgroundMediaPlayer.start();
+        }
+    }
+
+    // Method to pause background music
+    public void pauseBackgroundMusic() {
+        if (mBackgroundMediaPlayer != null && mBackgroundMediaPlayer.isPlaying()) {
+            mBackgroundMediaPlayer.pause();
+        }
+    }
+
+    @Override
+    public void toggleSound() {
+        isSoundEnabled = !isSoundEnabled;
+        if (isSoundEnabled) {
+            playBackgroundMusic();
+        } else {
+            pauseBackgroundMusic();
+        }
+    }
+
+    @Override
+    // Getter for sound status
+    public boolean isSoundEnabled() {
+        return isSoundEnabled;
     }
 
     // Private constructor
@@ -94,7 +122,7 @@ public class AudioManagerImpl implements IAudioManager {
             try {
                 loadSound(assetManager, "get_apple.ogg");
                 loadSound(assetManager, "snake_death.ogg");
-                loadBackgroundMusic(assetManager, "pop.mp3");
+                loadBackgroundMusic(); // Load background music
             } catch (IOException e) {
                 Log.e(TAG, "Failed to load sound files", e);
             }
@@ -109,6 +137,13 @@ public class AudioManagerImpl implements IAudioManager {
         }
     }
 
+    // Method to release MediaPlayer
+    public void releaseMediaPlayer() {
+        if (mBackgroundMediaPlayer != null) {
+            mBackgroundMediaPlayer.release();
+            mBackgroundMediaPlayer = null;
+        }
+    }
     // Method to load a sound file
     private void loadSound(AssetManager assetManager, String fileName) throws IOException {
         try (AssetFileDescriptor descriptor = assetManager.openFd(fileName)) {
@@ -126,17 +161,6 @@ public class AudioManagerImpl implements IAudioManager {
             }
             Log.d(TAG, "Loaded sound: " + fileName);
         }
-    }
-
-    // Main menu background music
-    public void playMainMenuMusic() {
-        if (!isSoundEnabled) return; // Do not play if sound is disabled
-        if (mSP == null) {
-            Log.e(TAG, "SoundPool instance is null");
-            return;
-        }
-        mSP.autoPause(); // Pause all sounds if sound is disabled
-        mSP.autoResume(); // Resume all sounds if sound is enabled
     }
 
     // Method to play a sound
@@ -162,21 +186,6 @@ public class AudioManagerImpl implements IAudioManager {
         } else {
             Log.e(TAG, "Requested sound ID not loaded: " + soundID);
         }
-    }
-
-    @Override
-    // Toggle sound on/off
-    public void toggleSound() {
-        isSoundEnabled = !isSoundEnabled;
-        if (!isSoundEnabled) {
-            mSP.autoPause(); // Pause all sounds if sound is disabled
-        }
-    }
-
-    @Override
-    // Getter for sound status
-    public boolean isSoundEnabled() {
-        return isSoundEnabled;
     }
 
     // Method to reinitialize the sounds
