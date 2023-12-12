@@ -19,26 +19,26 @@
 
 <!-- RUNNING CHANGELOG END -->
 
-[v0.3.0] - 2023-12-12
-✨ Merge pull request #7 from Snake-Charmers/audio-enhancements (5f3e9f0)
+## [v0.3.0] - 2023-12-12
+**✨ Merge pull request #7 from Snake-Charmers/audio-enhancements (5f3e9f0)
 
-✨ Audio enhancements (5f3e9f0)
+**✨ Audio enhancements (5f3e9f0)
 
-🐛 bugfix: make use of the touch event and key event interfaces (47eed6b)
+**🐛 bugfix: make use of the touch event and key event interfaces (47eed6b)
 
-🐛 bugfix: repair keyboard controller (f3bdd3d)
+**🐛 bugfix: repair keyboard controller (f3bdd3d)
 
-📚 Update CHANGELOG.md (01e8eac)
+**📚 Update CHANGELOG.md (01e8eac)
 
-📚 Update changelog (a54c812)
+**📚 Update changelog (a54c812)
 
-✨ Merge pull request #6 from Snake-Charmers/audio-enhancements (9a75bd8)
+**✨ Merge pull request #6 from Snake-Charmers/audio-enhancements (9a75bd8)
 
-📝 feat: enable haptic feedback (9a75bd8)
+**📝 feat: enable haptic feedback (9a75bd8)
 
-📝 feat: enable haptic feedback (8b3872a)
+**📝 feat: enable haptic feedback (8b3872a)
 
-📚 Update changelog (656794d)
+**📚 Update changelog (656794d)
 
 
 ## [v0.2.0] - 2023-12-12
