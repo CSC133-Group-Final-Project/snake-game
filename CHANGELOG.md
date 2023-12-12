@@ -1,28 +1,17 @@
 <!-- RUNNING CHANGELOG START -->
-## [v0.3.0] - 2023-12-12
+## [v0.4.0] - 2023-12-12
 
-**✨ Merge pull request #7 from Snake-Charmers/audio-enhancements** ([`5f3e9f0`](https://github.com/Snake-Charmers/charming-snake/commit/5f3e9f0f8eb5e0eb8c32234578cfc37317e83810))
+**✨ Merge pull request #8 from Snake-Charmers/audio-enhancements** ([`ce6d2c6`](https://github.com/Snake-Charmers/charming-snake/commit/ce6d2c66b10557163c4aade67972ddbfdc310872))
 
-**✨ Audio enhancements** ([`5f3e9f0`](https://github.com/Snake-Charmers/charming-snake/commit/5f3e9f0f8eb5e0eb8c32234578cfc37317e83810))
+**➖ remove resources which we did not end up implementing** ([`ce6d2c6`](https://github.com/Snake-Charmers/charming-snake/commit/ce6d2c66b10557163c4aade67972ddbfdc310872))
 
-**🐛 bugfix: make use of the touch event and key event interfaces** ([`47eed6b`](https://github.com/Snake-Charmers/charming-snake/commit/47eed6bec5ee793e4bff7818ca7ee87ba9aea60b))
+**➖ remove resources which we did not end up implementing** ([`7914fa0`](https://github.com/Snake-Charmers/charming-snake/commit/7914fa01e3f0b3111c8f3cf71e949a93e0f2a0a8))
 
-**🐛 bugfix: repair keyboard controller** ([`f3bdd3d`](https://github.com/Snake-Charmers/charming-snake/commit/f3bdd3d6f8c1d1f374f9f34646595abf27aca480))
-
-**📚 Update CHANGELOG.md** ([`01e8eac`](https://github.com/Snake-Charmers/charming-snake/commit/01e8eac6c02fd245873f28d572dac086e37abcd0))
-
-**📚 Update changelog** ([`a54c812`](https://github.com/Snake-Charmers/charming-snake/commit/a54c8127ec422b400dfcae5809d0189ce4a378a8))
-
-**✨ Merge pull request #6 from Snake-Charmers/audio-enhancements** ([`9a75bd8`](https://github.com/Snake-Charmers/charming-snake/commit/9a75bd8292408e27d321a6819dbee9d8a71c4f02))
-
-**📝 feat: enable haptic feedback** ([`9a75bd8`](https://github.com/Snake-Charmers/charming-snake/commit/9a75bd8292408e27d321a6819dbee9d8a71c4f02))
-
-**📝 feat: enable haptic feedback** ([`8b3872a`](https://github.com/Snake-Charmers/charming-snake/commit/8b3872adfd912d0f61099f0af26569f4e5dcdf4c))
-
-**📚 Update changelog** ([`656794d`](https://github.com/Snake-Charmers/charming-snake/commit/656794dba36a4d61f0be7200502603a04884baa0))
+**📚 Update changelog** ([`84a324e`](https://github.com/Snake-Charmers/charming-snake/commit/84a324e52aa377f2c75ffba7289986ed1d3994df))
 
 
 <!-- RUNNING CHANGELOG END -->
+
 
 
 ## [v0.2.0] - 2023-12-12
