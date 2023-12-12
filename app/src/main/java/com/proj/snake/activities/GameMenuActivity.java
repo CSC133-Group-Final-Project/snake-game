@@ -69,7 +69,8 @@ public class GameMenuActivity extends Activity {
 
         // Sound button logic
         soundButton.setOnClickListener(v -> {
-            IAudioManager audioManager = AudioManagerImpl.getInstance(getApplicationContext());
+            IAudioManager audioManager = AudioManagerImpl.getInstance(this);
+            audioManager.loadBackgroundMusic();
             audioManager.toggleSound();
             GlobalStateManager.getInstance().setSoundEnabled(audioManager.isSoundEnabled());
             updateSoundButtonText(soundButton);
