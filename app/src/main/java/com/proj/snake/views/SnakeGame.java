@@ -43,7 +43,7 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
 
 
         // Set this as the key listener
-        KeyboardInputController keyboardController = new KeyboardInputController(gameEventPublisher);
+        KeyboardInputController keyboardController = new KeyboardInputController(gameEventPublisher, gameManager.getSnake());
         this.setFocusable(true);
         this.setOnKeyListener(keyboardController);
 

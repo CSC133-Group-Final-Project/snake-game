@@ -9,15 +9,14 @@ import com.proj.snake.models.Snake;
 public class KeyboardInputController implements View.OnKeyListener {
     private final GameEventPublisher gameEventPublisher;
 
-    public KeyboardInputController(GameEventPublisher gameEventPublisher) {
+    public KeyboardInputController(GameEventPublisher gameEventPublisher, Snake snake) {
         this.gameEventPublisher = gameEventPublisher;
+        mSnake = snake;
     }
 
     private Snake mSnake;
 
-    public void KeyboardInputController(Snake snake) {
-        mSnake = snake;
-    }
+
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
