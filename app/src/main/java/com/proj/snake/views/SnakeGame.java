@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -40,13 +41,14 @@ public class SnakeGame extends SurfaceView implements IGameEventListener {
         TouchInputController inputController = new TouchInputController(gameEventPublisher, gameManager.getSnake());
         this.setOnTouchListener(inputController);
 
-
-
         // Set this as the key listener
-        KeyboardInputController keyboardController = new KeyboardInputController(gameEventPublisher);
+        KeyboardInputController keyboardController = new KeyboardInputController(gameEventPublisher, gameManager.getSnake());
         this.setFocusable(true);
         this.setOnKeyListener(keyboardController);
 
+
+        this.setOnTouchListener((View.OnTouchListener) inputController);
+        this.setOnKeyListener((View.OnKeyListener) keyboardController);
 
         gameStateManager = new GameStateManager(gameManager, gameRenderer, gameEventPublisher);
     }

@@ -4,20 +4,20 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import com.proj.snake.events.GameEventPublisher;
+import com.proj.snake.interfaces.IKeyboardEventListener;
 import com.proj.snake.models.Snake;
 
-public class KeyboardInputController implements View.OnKeyListener {
+public class KeyboardInputController implements View.OnKeyListener, IKeyboardEventListener {
     private final GameEventPublisher gameEventPublisher;
 
-    public KeyboardInputController(GameEventPublisher gameEventPublisher) {
+    public KeyboardInputController(GameEventPublisher gameEventPublisher, Snake snake) {
         this.gameEventPublisher = gameEventPublisher;
+        mSnake = snake;
     }
 
     private Snake mSnake;
 
-    public void KeyboardInputController(Snake snake) {
-        mSnake = snake;
-    }
+
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
