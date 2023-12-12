@@ -13,5 +13,8 @@ public interface IAudioManager {
     // Toggles the sound on/off.
     void toggleSound();
 
+    // load background music
+    void loadBackgroundMusic();
+
     boolean isSoundEnabled();
 }

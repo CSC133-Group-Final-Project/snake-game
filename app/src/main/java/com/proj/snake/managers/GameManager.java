@@ -22,6 +22,8 @@ import com.proj.snake.models.SlowDownPowerUp;
 import com.proj.snake.models.Snake;
 import com.proj.snake.utils.GameConstants;
 import com.proj.snake.utils.ScreenInfo;
+import android.os.Vibrator;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +48,18 @@ public class GameManager implements ICollisionEventListener {
 
     // store context passed in from SnakeActivity
     private Context mContext;
+    private final Vibrator vibrator;
+
+
 
 
     public GameManager(Context context, GameEventPublisher gameEventPublisher) {
         mContext = context;
         // Initialize screen info.
         ScreenInfo.init(context);
+
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+
 
         // Initialize collision event publisher.
         CollisionEventPublisher collisionEventPublisher = new CollisionEventPublisher();
@@ -148,6 +156,7 @@ public class GameManager implements ICollisionEventListener {
     public void onCollisionWithWall() {
         Log.d("Collision", "Collision with wall");
         audioManager.play(GameConstants.DEATH_SOUND);
+        provideHapticFeedback();
         gameEventPublisher.notifyGameOver();
     }
 
@@ -155,6 +164,7 @@ public class GameManager implements ICollisionEventListener {
     public void onCollisionWithSelf() {
         Log.d("Collision", "Collision with self");
         audioManager.play(GameConstants.DEATH_SOUND);
+        provideHapticFeedback();
         gameEventPublisher.notifyGameOver();
     }
 
@@ -166,6 +176,7 @@ public class GameManager implements ICollisionEventListener {
         scoreBoard.addScore();
         HighScore highScore = new HighScore(playerName, scoreBoard.getScore());
         HighScoreBoard.getInstance().addScore(mContext, highScore);
+        provideHapticFeedback();
         mSnake.grow();
 
         // Check for collision with SlowDownPowerUp
@@ -182,6 +193,7 @@ public class GameManager implements ICollisionEventListener {
         // Handle the logic when the snake collides with the power-up
         // For instance, activate slow-down mode and reset power-up location
         mSnake.setSlowDownMode(true);
+        provideHapticFeedback();
         slowDownPowerUp.reset(spawnRange);
     }
 
@@ -189,4 +201,16 @@ public class GameManager implements ICollisionEventListener {
     public SlowDownPowerUp getSlowDownPowerUp() {
         return slowDownPowerUp;
     }
+
+    private void provideHapticFeedback() {
+        // Check if the device has a vibrator
+        if (vibrator.hasVibrator()) {
+            // Vibrate for a specified length of time
+            // You can adjust the duration as needed
+            long vibrationDuration = 100; // milliseconds
+            vibrator.vibrate(vibrationDuration);
+        }
+    }
+
 }
+

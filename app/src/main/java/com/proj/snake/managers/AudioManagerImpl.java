@@ -52,10 +52,20 @@ public class AudioManagerImpl implements IAudioManager {
 
     // Method to play background music
     public void playBackgroundMusic() {
-        if (isSoundEnabled && mBackgroundMediaPlayer != null && !mBackgroundMediaPlayer.isPlaying()) {
-            mBackgroundMediaPlayer.start();
+        Log.d(TAG, "Attempting to play background music");
+        if (isSoundEnabled && mBackgroundMediaPlayer != null) {
+            Log.d(TAG, "Sound is enabled and media player is not null");
+            if (!mBackgroundMediaPlayer.isPlaying()) {
+                Log.d(TAG, "Media player is not playing, attempting to start");
+                mBackgroundMediaPlayer.start();
+            } else {
+                Log.d(TAG, "Media player is already playing");
+            }
+        } else {
+            Log.d(TAG, "Sound is disabled or media player is null");
         }
     }
+
 
     // Method to pause background music
     public void pauseBackgroundMusic() {
