@@ -1,6 +1,14 @@
 <!-- RUNNING CHANGELOG START -->
 ## [v0.4.0] - 2023-12-12
 
+**✨ Merge pull request #9 from Snake-Charmers/audio-enhancements** ([`4825302`](https://github.com/Snake-Charmers/charming-snake/commit/482530264aba796c345a157cc58b10e2c0449bbc))
+
+**🐛 bugfix: release audio resources onDestroy and fix sound toggle logic …** ([`4825302`](https://github.com/Snake-Charmers/charming-snake/commit/482530264aba796c345a157cc58b10e2c0449bbc))
+
+**🐛 bugfix: release audio resources onDestroy and fix sound toggle logic for background audio** ([`2a15fec`](https://github.com/Snake-Charmers/charming-snake/commit/2a15fec9d3af816345baad3378ee06d147b6aed2))
+
+**📚 Update changelog** ([`a34cc43`](https://github.com/Snake-Charmers/charming-snake/commit/a34cc43f0d75d549e87c410b5faf0f6dc9ef6a94))
+
 **✨ Merge pull request #8 from Snake-Charmers/audio-enhancements** ([`ce6d2c6`](https://github.com/Snake-Charmers/charming-snake/commit/ce6d2c66b10557163c4aade67972ddbfdc310872))
 
 **➖ remove resources which we did not end up implementing** ([`ce6d2c6`](https://github.com/Snake-Charmers/charming-snake/commit/ce6d2c66b10557163c4aade67972ddbfdc310872))
@@ -11,6 +19,7 @@
 
 
 <!-- RUNNING CHANGELOG END -->
+
 
 
 
