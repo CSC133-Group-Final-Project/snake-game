@@ -20,7 +20,6 @@ public class SnakeActivity extends Activity {
     // mPongGame is an instance of the PongGame class which handles the game logic and rendering.
     private SnakeGame mSnakeGame;
 
-
     private void updateSoundStatusText(boolean isSoundOn) {
         TextView soundStatusText = findViewById(R.id.soundStatusText);
         if (isSoundOn) {
