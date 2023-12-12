@@ -1,6 +1,18 @@
 <!-- RUNNING CHANGELOG START -->
 ## [v0.3.0] - 2023-12-12
 
+**✨ Merge pull request #7 from Snake-Charmers/audio-enhancements** ([`5f3e9f0`](https://github.com/Snake-Charmers/charming-snake/commit/5f3e9f0f8eb5e0eb8c32234578cfc37317e83810))
+
+**✨ Audio enhancements** ([`5f3e9f0`](https://github.com/Snake-Charmers/charming-snake/commit/5f3e9f0f8eb5e0eb8c32234578cfc37317e83810))
+
+**🐛 bugfix: make use of the touch event and key event interfaces** ([`47eed6b`](https://github.com/Snake-Charmers/charming-snake/commit/47eed6bec5ee793e4bff7818ca7ee87ba9aea60b))
+
+**🐛 bugfix: repair keyboard controller** ([`f3bdd3d`](https://github.com/Snake-Charmers/charming-snake/commit/f3bdd3d6f8c1d1f374f9f34646595abf27aca480))
+
+**📚 Update CHANGELOG.md** ([`01e8eac`](https://github.com/Snake-Charmers/charming-snake/commit/01e8eac6c02fd245873f28d572dac086e37abcd0))
+
+**📚 Update changelog** ([`a54c812`](https://github.com/Snake-Charmers/charming-snake/commit/a54c8127ec422b400dfcae5809d0189ce4a378a8))
+
 **✨ Merge pull request #6 from Snake-Charmers/audio-enhancements** ([`9a75bd8`](https://github.com/Snake-Charmers/charming-snake/commit/9a75bd8292408e27d321a6819dbee9d8a71c4f02))
 
 **📝 feat: enable haptic feedback** ([`9a75bd8`](https://github.com/Snake-Charmers/charming-snake/commit/9a75bd8292408e27d321a6819dbee9d8a71c4f02))
@@ -11,6 +23,7 @@
 
 
 <!-- RUNNING CHANGELOG END -->
+
 
 ## [v0.2.0] - 2023-12-12
 
