@@ -1,6 +1,8 @@
 package com.proj.snake.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,6 +19,9 @@ public class GameRenderer extends SurfaceView {
     private final GameManager gameManager;
     // Screen width to be used for rendering and calculations.
     private final int screenX = ScreenInfo.getInstance().getScreenX();
+
+    // Screen height to be used for rendering and calculations.
+    private final int screenY = ScreenInfo.getInstance().getScreenY();
     // Objects needed for drawing on the canvas.
     private Canvas mCanvas;
     private final Paint mPaint;
@@ -30,11 +35,22 @@ public class GameRenderer extends SurfaceView {
     // Variable to hold reference to the surface holder.
     private final SurfaceHolder mSurfaceHolder;
 
+    // Background image for the game.
+    private final android.graphics.Bitmap mBackgroundImage;
+
+
     // Constructor to initialize rendering components.
     public GameRenderer(Context context, SurfaceHolder mSurfaceHolder, GameManager gameManager) {
         super(context);
         this.gameManager = gameManager;
 
+
+        // Resizing the background image to fit the screen.
+        mBackgroundImage = Bitmap.createScaledBitmap(
+                BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_game_board),
+                screenX,
+                screenY,
+                false);
 
         // Calculating font size and margin based on screen size.
         mFontSize = screenX / 20;
@@ -62,8 +78,8 @@ public class GameRenderer extends SurfaceView {
             // Objects for drawing
             mCanvas = mSurfaceHolder.lockCanvas();
 
-            // Fill the screen with a color
-            mCanvas.drawColor(Color.argb(255, 26, 128, 182));
+            // Draw the background image
+            mCanvas.drawBitmap(mBackgroundImage, 0, 0, null);
 
             // Set the size and color of the mPaint for the text
             mPaint.setColor(Color.argb(255, 255, 255, 255));
@@ -71,6 +87,7 @@ public class GameRenderer extends SurfaceView {
 
             // Draw the score
             mCanvas.drawText("" + gameManager.getScore(), 20, 120, mPaint);
+
 
             // Draw the apple and the snake
             gameManager.getApple().draw(mCanvas, mPaint);

@@ -12,11 +12,11 @@ def get_current_version(repo):
         tags = sorted(repo.tags, key=lambda t: t.commit.committed_datetime)
         return tags[-1].name
 
-# Function to increment the patch version
+# Function to increment the version
 def increment_version(version):
     version = version[1:]  # Remove the leading 'v'
     major, minor, patch = map(int, version.split('.'))
-    return f"v{major}.{minor}.{patch + 1}"
+    return f"v{major}.{minor + 1}.{patch}"
 
 # Function to create a new tag
 def create_tag(repo, tag_name):
@@ -118,18 +118,27 @@ def format_commit_message(commit_hash, message):
     return formatted_message
 
 # Main function to generate the changelog
-def generate_changelog(repo_path, new_tag):
+def generate_changelog(repo_path, since_tag, new_tag):
     repo = Repo(repo_path)
-    commits = list(repo.iter_commits())
 
-    with open("CHANGELOG.md", "w") as changelog:
-        changelog.write(f"## [{new_tag}] - {datetime.now().strftime('%Y-%m-%d')}\n\n")
+    # Ensure since_tag exists in the repo
+    if since_tag not in [tag.name for tag in repo.tags]:
+        raise ValueError(f"Tag {since_tag} not found in repository")
 
-        for commit in commits:
-            formatted_message = format_commit_message(commit.hexsha, commit.message)
-            changelog.write(formatted_message)
+    # Get commits since the specified tag
+    commits = list(repo.iter_commits(f"{since_tag}..HEAD"))
 
-        changelog.write("\n---\n")
+    new_changelog_content = f"## [{new_tag}] - {datetime.now().strftime('%Y-%m-%d')}\n\n"
+
+    for commit in commits:
+        formatted_message = format_commit_message(commit.hexsha, commit.message)
+        new_changelog_content += formatted_message
+
+    new_changelog_content += "\n---\n"
+
+    with open("RELEASE_CHANGELOG.md", "w") as file:
+        file.write(new_changelog_content)
+
 
 def check_for_new_tag(repo_path):
     repo = Repo(repo_path)
@@ -176,7 +185,8 @@ def update_running_changelog(repo_path, current_version):
     last_tag = repo.tags[-1] if repo.tags else None
     next_version = increment_version(current_version)
 
-    running_changelog_content = f"<!-- RUNNING CHANGELOG START -->\n## Upcoming Changes for {next_version}\n\n"
+    # Prepare the running changelog content
+    running_changelog_content = f"<!-- RUNNING CHANGELOG START -->\n## [{next_version}] - {datetime.now().strftime('%Y-%m-%d')}\n\n"
 
     commits = list(repo.iter_commits(f"{last_tag}..HEAD")) if last_tag else list(repo.iter_commits())
 
@@ -190,13 +200,19 @@ def update_running_changelog(repo_path, current_version):
     with open("CHANGELOG.md", "r") as file:
         changelog_content = file.read()
 
-    # Replace the running changelog portion
-    new_changelog_content = re.sub(r'<!-- RUNNING CHANGELOG START -->.*<!-- RUNNING CHANGELOG END -->',
-                                   running_changelog_content, changelog_content, flags=re.DOTALL)
+    # Check if running changelog section exists
+    if "<!-- RUNNING CHANGELOG START -->" in changelog_content:
+        # Replace the existing running changelog section
+        new_changelog_content = re.sub(r'<!-- RUNNING CHANGELOG START -->.*<!-- RUNNING CHANGELOG END -->',
+                                       running_changelog_content, changelog_content, flags=re.DOTALL)
+    else:
+        # Append the new running changelog at the top
+        new_changelog_content = running_changelog_content + "\n" + changelog_content
 
     # Write the updated content back to CHANGELOG.md
     with open("CHANGELOG.md", "w") as file:
         file.write(new_changelog_content)
+
 
 # Main function
 def main():
@@ -220,7 +236,7 @@ def main():
     elif args.action == "generate":
         if not args.since_tag or not args.new_tag:
             parser.error("'generate' action requires --since-tag and --new-tag")
-        generate_changelog(args.repo_path, args.new_tag)
+        generate_changelog(args.repo_path, args.since_tag, args.new_tag)
         print(f"Generated changelog for {args.since_tag}..{args.new_tag}")
     elif args.action == "check":
         check_for_new_tag(args.repo_path)

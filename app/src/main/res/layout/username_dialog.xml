@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_box_background"
+    android:padding="50dp">
+
+    <EditText
+        android:id="@+id/usernameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:autofillHints="username"
+        android:hint="@string/enter_username"
+        android:inputType="text"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textColorHint="@color/black"
+        android:backgroundTint="@color/orange_500"
+        android:maxLines="1"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/usernameSubmitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/orange_500"
+        android:text="@string/submit" />
+</LinearLayout>

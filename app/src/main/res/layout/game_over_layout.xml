@@ -1,0 +1,79 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/dialog_box_background"
+        android:padding="20dp">
+
+        <!-- Title for Game Over Screen -->
+        <TextView
+            android:id="@+id/gameOverTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Game Over"
+            android:textSize="24sp"
+            android:textStyle="bold|italic"
+            android:textColor="@color/orange_500"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="10dp" />
+
+        <!-- Container for Score Text with Background -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp"
+            android:background="@drawable/dialog_box_background">
+
+            <TextView
+                android:id="@+id/scoreText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Score: 0"
+                android:textSize="20sp"
+                android:textColor="@color/orange_500"
+                android:gravity="center" />
+        </FrameLayout>
+
+        <!-- View High Scores Button -->
+        <Button
+            android:id="@+id/viewHighScoresButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View High Scores"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            app:backgroundTint="@color/orange_500"
+            android:textColor="@android:color/white" />
+
+        <!-- Play Again Button -->
+        <Button
+            android:id="@+id/playAgainButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play Again"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            app:backgroundTint="@color/orange_500"
+            android:textColor="@android:color/white" />
+
+        <!-- Main Menu Button -->
+        <Button
+            android:id="@+id/mainMenuButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Main Menu"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            app:backgroundTint="@color/orange_500"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+</FrameLayout>

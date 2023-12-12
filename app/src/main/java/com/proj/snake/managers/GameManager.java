@@ -4,43 +4,52 @@ package com.proj.snake.managers;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.proj.snake.events.CollisionEventPublisher;
 import com.proj.snake.events.GameEventPublisher;
 import com.proj.snake.interfaces.IAudioManager;
 import com.proj.snake.interfaces.ICollisionEventListener;
+import com.proj.snake.interfaces.IKeyboardEventListener;
 import com.proj.snake.interfaces.IResettableEntity;
 import com.proj.snake.interfaces.ITouchEventListener;
 import com.proj.snake.models.Apple;
+import com.proj.snake.models.HighScore;
+import com.proj.snake.models.HighScoreBoard;
+import com.proj.snake.models.Score;
 import com.proj.snake.models.SlowDownPowerUp;
 import com.proj.snake.models.Snake;
-import com.proj.snake.models.HighScoreBoard;
 import com.proj.snake.utils.GameConstants;
 import com.proj.snake.utils.ScreenInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameManager implements ITouchEventListener, ICollisionEventListener {
+public class GameManager implements ICollisionEventListener {
     // A snake ssss
     private final Snake mSnake;
     private final Apple mApple;
     private final GameEventPublisher gameEventPublisher;
     private final IAudioManager audioManager;
 
-    private final HighScoreBoard scoreBoard;
+    private final Score scoreBoard;
 
     private SlowDownPowerUp slowDownPowerUp;
 
     private final Point spawnRange;
 
+    private final String playerName = GlobalStateManager.getInstance().getUsername();
 
     private static long mNextFrameTime; // the time the next frame should be drawn
     private final List<IResettableEntity> resettables = new ArrayList<>();
 
+    // store context passed in from SnakeActivity
+    private Context mContext;
+
 
     public GameManager(Context context, GameEventPublisher gameEventPublisher) {
+        mContext = context;
         // Initialize screen info.
         ScreenInfo.init(context);
 
@@ -62,11 +71,14 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
 
         this.gameEventPublisher = gameEventPublisher;
 
+
         // Initialize the SoundPool
         audioManager = AudioManagerImpl.getInstance(context);
 
-        // Initialize the Highscore board
-        scoreBoard = HighScoreBoard.getInstance();
+        // Initialize the score board
+        scoreBoard = Score.getInstance();
+
+        // Initialize the high score
 
         // Add resettable entities to the list of resettables.
         resettables.add(mSnake);
@@ -110,10 +122,10 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         // There are 1000 milliseconds in a second
         final long MILLIS_PER_SECOND = 1000;
         // Are we due to update the frame
-        if(mNextFrameTime <= System.currentTimeMillis()){
+        if (mNextFrameTime <= System.currentTimeMillis()) {
             // Tenth of a second has passed
             // Setup when the next update will be triggered
-            mNextFrameTime =System.currentTimeMillis()
+            mNextFrameTime = System.currentTimeMillis()
                     + MILLIS_PER_SECOND / TARGET_FPS;
             // Return true so that the update and draw
             // methods are executed
@@ -127,18 +139,6 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         mSnake.move();
     }
 
-
-    // Handle Bat movement events based on callback from TouchInputHandler.
-    @Override
-    public void onScreenTouched(MotionEvent motionEvent) {
-        if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            if (gameEventPublisher.notifyIsPaused()) {
-                reset();
-            }
-            // Let the Snake class handle the input
-            mSnake.switchHeading(motionEvent);
-        }
-    }
 
     public boolean isGamePaused() {
         return gameEventPublisher.notifyIsPaused();
@@ -164,6 +164,8 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         mApple.reset();
         audioManager.play(GameConstants.EAT_SOUND);
         scoreBoard.addScore();
+        HighScore highScore = new HighScore(playerName, scoreBoard.getScore());
+        HighScoreBoard.getInstance().addScore(mContext, highScore);
         mSnake.grow();
 
         // Check for collision with SlowDownPowerUp
@@ -188,5 +190,3 @@ public class GameManager implements ITouchEventListener, ICollisionEventListener
         return slowDownPowerUp;
     }
 }
-
-
