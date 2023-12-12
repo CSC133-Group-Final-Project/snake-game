@@ -11,10 +11,13 @@ public interface IAudioManager {
     void reinitialize();
 
     // Toggles the sound on/off.
-    void toggleSound();
+    void toggleSound(boolean isSoundEnabled);
 
     // load background music
     void loadBackgroundMusic();
+
+    // play background music
+    void playBackgroundMusic();
 
     boolean isSoundEnabled();
 }

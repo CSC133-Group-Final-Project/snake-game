@@ -37,6 +37,7 @@ public class SnakeActivity extends Activity {
         // Find the SnakeGame view object in the activity's view hierarchy.
         // This enables the SnakeGame object to perform rendering.
         mSnakeGame = findViewById(R.id.snakeGame);
+        AudioManagerImpl audioManager = AudioManagerImpl.getInstance(this);
 
         // Find the Switch and TextView in the sound_checkbox_layout.xml layout
         Switch soundSwitch = findViewById(R.id.soundSwitch);
@@ -48,35 +49,25 @@ public class SnakeActivity extends Activity {
         } else {
             soundSwitch.setChecked(false);
         }
-        TextView soundStatusText = findViewById(R.id.soundStatusText);
 
         // Initialize the text based on the initial state of the Switch
         updateSoundStatusText(soundSwitch.isChecked());
 
         // Set a listener to handle switch state changes
         soundSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    // Toggle the sound based on the switch state
-                    AudioManagerImpl audioManager = AudioManagerImpl.getInstance(this);
-                    audioManager.toggleSound();
-                    GlobalStateManager.getInstance().setSoundEnabled(isChecked);
-
+                    // Toggle the sound based on the switch state and current sound state from the GlobalStateManager
+                    if (GlobalStateManager.getInstance().isSoundEnabled()) {
+                        audioManager.toggleSound(false);
+                        GlobalStateManager.getInstance().setSoundEnabled(false);
+                    } else {
+                        audioManager.toggleSound(true);
+                        GlobalStateManager.getInstance().setSoundEnabled(true);
+                    }
                     // Update the text based on the switch state
                     updateSoundStatusText(isChecked);
-
                 });
-
-
-        // Initialize the SnakeGame object.
-//        mSnakeGame = new SnakeGame(this);
-
-        // Set the current content view to Snake Game view for rendering the game.
-//        setContentView(mSnakeGame);
-
     }
 
-
-
-    // Called after onStop() when the current Activity is being re-displayed to the user.
     @Override
     protected void onResume() {
         super.onResume();
@@ -92,5 +83,11 @@ public class SnakeActivity extends Activity {
 
         // Pauses the game when the activity is paused to ensure game state is maintained.
         mSnakeGame.pause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AudioManagerImpl.getInstance(this).deinitSounds();
     }
 }

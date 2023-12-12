@@ -58,21 +58,33 @@ public class GameMenuActivity extends Activity {
         Button aboutButton = findViewById(R.id.aboutButton);
         Button exitButton = findViewById(R.id.exitButton);
 
+        if (GlobalStateManager.getInstance().isSoundEnabled()) {
+            soundButton.setText(R.string.sound_on);
+        } else {
+            soundButton.setText(R.string.sound_off);
+        }
+
         // Play button logic
         playButton.setOnClickListener(v -> showUsernameDialog());
 
         // Exit button logic
         exitButton.setOnClickListener(v -> {
-            // Close the app
-            finish();
+            // Kill the app
+            finishAndRemoveTask();
+            System.exit(0);
         });
+
+        IAudioManager audioManager = AudioManagerImpl.getInstance(this);
 
         // Sound button logic
         soundButton.setOnClickListener(v -> {
-            IAudioManager audioManager = AudioManagerImpl.getInstance(this);
-            audioManager.loadBackgroundMusic();
-            audioManager.toggleSound();
-            GlobalStateManager.getInstance().setSoundEnabled(audioManager.isSoundEnabled());
+            if (GlobalStateManager.getInstance().isSoundEnabled()) {
+                audioManager.toggleSound(false);
+                GlobalStateManager.getInstance().setSoundEnabled(false);
+            } else {
+                audioManager.toggleSound(true);
+                GlobalStateManager.getInstance().setSoundEnabled(true);
+            }
             updateSoundButtonText(soundButton);
         });
 

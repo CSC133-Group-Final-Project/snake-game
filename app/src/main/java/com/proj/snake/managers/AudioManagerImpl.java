@@ -30,13 +30,13 @@ public class AudioManagerImpl implements IAudioManager {
     private final Context myContext;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private boolean isSoundEnabled = true; // Default to true
-    private MediaPlayer mBackgroundMediaPlayer;
+    private static MediaPlayer mBackgroundMediaPlayer;
 
     // Method to load background music
     public void loadBackgroundMusic() {
         AssetManager assetManager = myContext.getAssets();
         try {
-            AssetFileDescriptor descriptor = assetManager.openFd("pop.mp3");
+            AssetFileDescriptor descriptor = assetManager.openFd("pop.ogg");
             mBackgroundMediaPlayer = new MediaPlayer();
             mBackgroundMediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
             mBackgroundMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
@@ -45,8 +45,23 @@ public class AudioManagerImpl implements IAudioManager {
                     .build());
             mBackgroundMediaPlayer.setLooping(true);
             mBackgroundMediaPlayer.prepare(); // Synchronously prepare the media player
+
+            mBackgroundMediaPlayer.setOnPreparedListener(MediaPlayer::start);
         } catch (IOException e) {
             Log.e(TAG, "Failed to load background music", e);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "Failed to prepare media player", e);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to start media player", e);
+        } finally {
+            Log.d(TAG, "Loaded background music");
+            mBackgroundMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    Log.d(TAG, "Media player prepared");
+                    playBackgroundMusic();
+                }
+            });
         }
     }
 
@@ -75,8 +90,8 @@ public class AudioManagerImpl implements IAudioManager {
     }
 
     @Override
-    public void toggleSound() {
-        isSoundEnabled = !isSoundEnabled;
+    public void toggleSound(boolean isSoundEnabled) {
+        this.isSoundEnabled = isSoundEnabled;
         if (isSoundEnabled) {
             playBackgroundMusic();
         } else {
